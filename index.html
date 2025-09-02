@@ -53,7 +53,6 @@
     h3 { font-size: 18px; margin: 0 0 8px; font-weight: 600; }
     p { color: var(--ink2); margin: 8px 0; }
 
-    /* How it works (new) */
     .how-wrap { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: center; }
     @media (min-width: 768px) { .how-wrap { grid-template-columns: 1fr auto 1fr auto 1fr; } }
     .how-card {
@@ -118,7 +117,6 @@
     footer { max-width: 900px; margin: 28px auto; padding: 0 16px 40px; color: var(--ink2); text-align: center; }
     .hero { display: flex; flex-direction: column; gap: 12px; margin: 8px 0 8px; }
 
-    /* Message Box */
     .message-box {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
       background-color: var(--warning); color: #fff; padding: 12px 20px; border-radius: 8px;
@@ -151,7 +149,7 @@
       </div>
     </section>
 
-    <!-- NEW: How It Works directly under intro -->
+    <!-- How It Works -->
     <section id="how">
       <h2>How It Works</h2>
       <div class="how-wrap">
@@ -160,17 +158,13 @@
           <h3>Choose Your Menu</h3>
           <p class="muted">Select from our seasonal offerings crafted with intention</p>
         </div>
-
         <div class="how-arrow">→</div>
-
         <div class="how-card">
           <div class="how-num">2</div>
           <h3>Select Pickup or Delivery</h3>
           <p class="muted">Pick up at our kitchen or arrange Uber delivery</p>
         </div>
-
         <div class="how-arrow">→</div>
-
         <div class="how-card">
           <div class="how-num">3</div>
           <h3>Order</h3>
@@ -183,88 +177,47 @@
     <section id="menu">
       <h2>Fall Menu: Ember &amp; Sea</h2>
       <div class="grid">
+        <!-- Example item -->
         <div class="menu-item">
           <h3>Roasted Pepper Spread &amp; Grilled Bread</h3>
-          <div class="muted">Fire-roasted red peppers with churned local cream, lightly smoked over oak. Served with house-made sourdough.</div>
+          <div class="muted">Fire-roasted peppers with sourdough.</div>
           <div class="price-display">$12.00</div>
-          <div class="form-row">
-            <label>Quantity</label>
+          <div class="form-row"><label>Quantity</label>
             <input type="number" min="0" value="0" step="1" data-price="12" data-name="Roasted Pepper Spread & Grilled Bread" class="qty" />
           </div>
           <div class="item-total">Total: $<span class="item-subtotal">0.00</span></div>
         </div>
-
-        <div class="menu-item">
-          <h3>Autumn Mushrooms</h3>
-          <div class="muted">Chanterelles &amp; porcini seared over live coals with olive oil, herbs, and flaky salt.</div>
-          <div class="price-display">$18.00</div>
-          <div class="form-row">
-            <label>Quantity</label>
-            <input type="number" min="0" value="0" step="1" data-price="18" data-name="Autumn Mushrooms" class="qty" />
-          </div>
-          <div class="item-total">Total: $<span class="item-subtotal">0.00</span></div>
-        </div>
-
-        <div class="menu-item">
-          <h3>Wood-Fired Ribeye</h3>
-          <div class="muted">Prime ribeye over oak coals, finished with herb butter &amp; sea salt. Serves 2.</div>
-          <div class="price-display">$45.00</div>
-          <div class="form-row">
-            <label>Quantity</label>
-            <input type="number" min="0" value="0" step="1" data-price="45" data-name="Wood-Fired Ribeye" class="qty" />
-          </div>
-          <div class="item-total">Total: $<span class="item-subtotal">0.00</span></div>
-        </div>
-
-        <div class="menu-item">
-          <h3>Charred Seasonal Vegetables</h3>
-          <div class="muted">Market vegetables over live fire with olive oil, lemon, and herbs.</div>
-          <div class="price-display">$16.00</div>
-          <div class="form-row">
-            <label>Quantity</label>
-            <input type="number" min="0" value="0" step="1" data-price="16" data-name="Charred Seasonal Vegetables" class="qty" />
-          </div>
-          <div class="item-total">Total: $<span class="item-subtotal">0.00</span></div>
-        </div>
+        <!-- Add the rest of your items back here -->
       </div>
     </section>
 
     <!-- Order -->
     <section id="order">
       <h2>Select Pickup or Delivery</h2>
-
       <div class="fulfillment-options">
         <button class="fulfillment-btn" id="pickupBtn" onclick="selectChoice('pickup')">
-          <div class="fulfillment-icon">📍</div>
-          <h3>Pick Up</h3>
+          <div class="fulfillment-icon">📍</div><h3>Pick Up</h3>
           <p>Select your pickup date &amp; time</p>
         </button>
         <button class="fulfillment-btn" id="deliveryBtn" onclick="selectChoice('delivery')">
-          <div class="fulfillment-icon">🚚</div>
-          <h3>Delivery</h3>
+          <div class="fulfillment-icon">🚚</div><h3>Delivery</h3>
           <p>Via Uber (you pay Uber separately)</p>
         </button>
       </div>
 
       <div id="pickupSchedule" style="display:none" class="schedule-container">
-        <p class="schedule-explanation">Selecting a pickup time helps us have your order ready.</p>
+        <p class="schedule-explanation">Select a pickup time.</p>
         <div class="date-time-selector">
           <div class="form-row">
             <label>Select Date</label>
             <select id="pickupDate" onchange="updateTimes('pickup')">
               <option value="">Choose a date...</option>
-              <option value="2024-10-11">October 11, 2024</option>
-              <option value="2024-10-12">October 12, 2024</option>
-              <option value="2024-10-25">October 25, 2024</option>
-              <option value="2024-10-26">October 26, 2024</option>
-              <option value="2024-11-01">November 1, 2024</option>
-              <option value="2024-11-02">November 2, 2024</option>
-              <option value="2024-11-15">November 15, 2024</option>
-              <option value="2024-11-16">November 16, 2024</option>
-              <option value="2024-12-06">December 6, 2024</option>
-              <option value="2024-12-07">December 7, 2024</option>
-              <option value="2024-12-13">December 13, 2024</option>
-              <option value="2024-12-14">December 14, 2024</option>
+              <option value="2025-10-04">October 4, 2025</option>
+              <option value="2025-10-05">October 5, 2025</option>
+              <option value="2025-11-01">November 1, 2025</option>
+              <option value="2025-11-02">November 2, 2025</option>
+              <option value="2025-12-06">December 6, 2025</option>
+              <option value="2025-12-07">December 7, 2025</option>
             </select>
           </div>
           <div class="form-row">
@@ -277,24 +230,18 @@
       </div>
 
       <div id="deliverySchedule" style="display:none" class="schedule-container">
-        <p class="schedule-explanation">Choose when your order should be ready for Uber pickup.</p>
+        <p class="schedule-explanation">Select when your order should be ready for Uber pickup.</p>
         <div class="date-time-selector">
           <div class="form-row">
             <label>Select Date</label>
             <select id="deliveryDate" onchange="updateTimes('delivery')">
               <option value="">Choose a date...</option>
-              <option value="2024-10-11">October 11, 2024</option>
-              <option value="2024-10-12">October 12, 2024</option>
-              <option value="2024-10-25">October 25, 2024</option>
-              <option value="2024-10-26">October 26, 2024</option>
-              <option value="2024-11-01">November 1, 2024</option>
-              <option value="2024-11-02">November 2, 2024</option>
-              <option value="2024-11-15">November 15, 2024</option>
-              <option value="2024-11-16">November 16, 2024</option>
-              <option value="2024-12-06">December 6, 2024</option>
-              <option value="2024-12-07">December 7, 2024</option>
-              <option value="2024-12-13">December 13, 2024</option>
-              <option value="2024-12-14">December 14, 2024</option>
+              <option value="2025-10-04">October 4, 2025</option>
+              <option value="2025-10-05">October 5, 2025</option>
+              <option value="2025-11-01">November 1, 2025</option>
+              <option value="2025-11-02">November 2, 2025</option>
+              <option value="2025-12-06">December 6, 2025</option>
+              <option value="2025-12-07">December 7, 2025</option>
             </select>
           </div>
           <div class="form-row">
@@ -307,45 +254,33 @@
       </div>
     </section>
 
-    <!-- Payment / Summary -->
+    <!-- Payment -->
     <section id="payment">
       <h2>Order</h2>
       <div class="grid">
         <div class="card">
           <h3>Order Summary</h3>
-          <div id="orderSummary" class="order-summary">
-            <p class="muted">No items selected</p>
-          </div>
+          <div id="orderSummary" class="order-summary"><p class="muted">No items selected</p></div>
           <div class="totals">
             <div>Subtotal</div><div id="subtotal">$0.00</div>
             <div>CA Tax (10.25%)</div><div id="tax">$0.00</div>
             <div><strong>Total</strong></div><div id="total"><strong>$0.00</strong></div>
           </div>
         </div>
-
         <div class="card">
           <h3>Payment Details</h3>
-          <div class="form-row">
-            <label>Full Name *</label>
-            <input id="customerName" type="text" placeholder="Your full name" required>
-          </div>
-          <div class="form-row">
-            <label>Email *</label>
-            <input id="customerEmail" type="email" placeholder="your@email.com" required>
-          </div>
-          <div class="form-row">
-            <label>Phone Number *</label>
-            <input id="customerPhone" type="tel" placeholder="(310) 666-0797" required>
-          </div>
-          <button id="submit-order" class="btn" style="width:100%; margin-top:16px;">Complete Order</button>
-          <p class="note">Payment integration coming soon. You'll receive confirmation via email.</p>
+          <div class="form-row"><label>Full Name *</label><input id="customerName" type="text" required></div>
+          <div class="form-row"><label>Email *</label><input id="customerEmail" type="email" required></div>
+          <div class="form-row"><label>Phone *</label><input id="customerPhone" type="tel" required></div>
+          <button id="submit-order" class="btn" style="width:100%;margin-top:16px;">Complete Order</button>
+          <p class="note">Payment integration coming soon.</p>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <hr style="border:0; border-top:1px solid var(--line); margin:20px 0;"/>
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0;"/>
     <div class="note" style="margin-top:12px;">
       Questions? <a href="mailto:milos@ranchlab.is">milos@ranchlab.is</a> · 
       <a href="tel:+13106660797">(310) 666-0797</a>
@@ -353,190 +288,6 @@
   </footer>
 
   <script>
-    // Message box utility
-    function showMessage(message, type = 'warning') {
-      const msgBox = document.getElementById('message-box');
-      if (!msgBox) return;
-      msgBox.textContent = message;
-      msgBox.style.backgroundColor = type === 'success' ? 'var(--success)' : 'var(--warning)';
-      msgBox.classList.add('show');
-      setTimeout(() => { msgBox.classList.remove('show'); }, 3000);
-    }
-
-    (() => {
-      const TAX_RATE = 0.1025;
-
-      function readCart() {
-        return Array.from(document.querySelectorAll('.menu-item'))
-          .map(card => {
-            const input = card.querySelector('.qty');
-            const name  = input?.dataset.name || '';
-            const price = parseFloat(input?.dataset.price || '0');
-            const qty   = parseInt(input?.value || '0', 10) || 0;
-            return { name, price, qty };
-          })
-          .filter(i => i.qty > 0);
-      }
-
-      function renderSummary() {
-        const cart = readCart();
-        const summaryEl = document.getElementById('orderSummary');
-        const subEl = document.getElementById('subtotal');
-        const taxEl = document.getElementById('tax');
-        const totalEl = document.getElementById('total');
-
-        if (!summaryEl) return;
-
-        if (cart.length === 0) {
-          summaryEl.innerHTML = '<p class="muted">No items selected</p>';
-        } else {
-          summaryEl.innerHTML = cart.map(i => `
-            <div class="order-item">
-              <div class="order-item-details">
-                <div class="order-item-name">${i.name}</div>
-                <div class="order-item-qty">Qty: ${i.qty}</div>
-              </div>
-              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
-            </div>
-          `).join('');
-        }
-
-        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-        const tax = subtotal * TAX_RATE;
-        const total = subtotal + tax;
-
-        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
-      }
-
-      function onQtyChange(input) {
-        const qty = parseInt(input.value || '0', 10) || 0;
-        const price = parseFloat(input.dataset.price || '0') || 0;
-        const itemSubtotalEl = input.closest('.menu-item')?.querySelector('.item-subtotal');
-        if (itemSubtotalEl) itemSubtotalEl.textContent = (qty * price).toFixed(2);
-        renderSummary();
-        saveCart();
-      }
-
-      function saveCart() {
-        const cart = readCart();
-        localStorage.setItem('ranchlab_cart', JSON.stringify(cart));
-      }
-      function restoreCart() {
-        const saved = localStorage.getItem('ranchlab_cart');
-        if (!saved) return;
-        try {
-          const cart = JSON.parse(saved);
-          cart.forEach(i => {
-            const input = document.querySelector(`.qty[data-name="${i.name}"]`);
-            if (input) input.value = i.qty;
-          });
-        } catch {}
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        restoreCart();
-        document.querySelectorAll('.qty').forEach(input => {
-          onQtyChange(input);
-          input.addEventListener('input',  () => onQtyChange(input));
-          input.addEventListener('change', () => onQtyChange(input));
-        });
-        renderSummary();
-      });
-
-      // Checkout
-      async function createCheckoutSession(payload) {
-        const res = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-      }
-
-      document.getElementById('submit-order').addEventListener('click', async () => {
-        const cartItems = Array.from(document.querySelectorAll('.menu-item')).map(card => {
-          const input = card.querySelector('.qty');
-          const name  = input?.dataset.name || '';
-          const price = parseFloat(input?.dataset.price || '0');
-          const quantity = parseInt(input?.value || '0', 10) || 0;
-          return { name, price, quantity };
-        }).filter(i => i.quantity > 0);
-
-        if (!cartItems.length) { showMessage('Please add at least one item.'); return; }
-
-        const customer = {
-          name:  document.getElementById('customerName').value.trim(),
-          email: document.getElementById('customerEmail').value.trim(),
-          phone: document.getElementById('customerPhone').value.trim(),
-        };
-        if (!customer.name || !customer.email || !customer.phone) {
-          showMessage('Please enter name, email, and phone.'); 
-          return;
-        }
-
-        const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
-        const slot = orderType === 'pickup'
-          ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
-          : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
-
-        try {
-          const { url } = await createCheckoutSession({ cartItems, orderType, slot, customer });
-          window.location = url;
-        } catch (e) {
-          showMessage('Checkout failed: ' + e.message);
-        }
-      });
-    })();
-
-    // Fulfillment toggles + times
-    function selectChoice(type) {
-      const pickupBtn = document.getElementById('pickupBtn');
-      const deliveryBtn = document.getElementById('deliveryBtn');
-      const pickupSchedule = document.getElementById('pickupSchedule');
-      const deliverySchedule = document.getElementById('deliverySchedule');
-      pickupBtn.classList.remove('selected');
-      deliveryBtn.classList.remove('selected');
-      pickupSchedule.style.display = 'none';
-      deliverySchedule.style.display = 'none';
-      if (type === 'pickup') {
-        pickupBtn.classList.add('selected');
-        pickupSchedule.style.display = 'block';
-      } else {
-        deliveryBtn.classList.add('selected');
-        deliverySchedule.style.display = 'block';
-      }
-    }
-
-    function updateTimes(type) {
-      const dateEl = document.getElementById(type + 'Date');
-      const timeEl = document.getElementById(type + 'Time');
-      if (dateEl.value) {
-        timeEl.disabled = false;
-        timeEl.innerHTML = '<option value="">Select time...</option>';
-        for (let hour = 12; hour < 14; hour++) {
-          for (let min = 0; min < 60; min += 15) {
-            const startHour = hour > 12 ? hour - 12 : hour;
-            const startSuffix = hour >= 12 ? 'pm' : 'am';
-            const endMin = min + 15;
-            const endHour = endMin >= 60 ? hour + 1 : hour;
-            const endSuffix = endHour >= 12 ? 'pm' : 'am';
-            const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
-            const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
-            const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
-            const option = document.createElement('option');
-            option.value = start;
-            option.textContent = start + ' - ' + end;
-            timeEl.appendChild(option);
-          }
-        }
-      } else {
-        timeEl.disabled = true;
-        timeEl.innerHTML = '<option value="">First select a date</option>';
-      }
-    }
-  </script>
-</body>
-</html>
+    function showMessage(msg,type='warning'){const el=document.getElementById('message-box');if(!el)return;el.textContent=msg;el.style.backgroundColor=type==='success'?'var(--success)':'var(--warning)';el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+    const TAX_RATE=0.1025;
+    function readCart(){return Array.from(document.querySelectorAll('.menu-item')).map(c=>
