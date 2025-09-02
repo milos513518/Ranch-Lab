@@ -65,10 +65,7 @@
       font-weight: 800;
       box-shadow: 0 6px 18px rgba(109,40,217,.35);
     }
-    .how-arrow {
-      display: none;
-      font-size: 22px; color: var(--brand); font-weight: 800; text-align: center;
-    }
+    .how-arrow { display: none; font-size: 22px; color: var(--brand); font-weight: 800; text-align: center; }
     @media (min-width: 768px) { .how-arrow { display: block; } }
 
     .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -78,9 +75,13 @@
     .menu-item { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); transition: border-color .2s; }
     .menu-item:hover { border-color: var(--brand); }
     .muted { color: var(--ink2); }
+
     .btn { appearance: none; border: 0; background: var(--brand); color: #fff; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background .2s; text-align: center; display: inline-block; }
     .btn:hover { background: #5b21b6; }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-outline { background:#fff; color: var(--brand); border: 2px solid var(--brand); }
+    .btn-outline:hover { background: rgba(109,40,217,.06); }
+    .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
 
     .form-row { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
     input[type=text],input[type=email],input[type=tel],input[type=number],select {
@@ -124,10 +125,34 @@
     }
     .message-box.show { opacity: 1; }
 
-    /* CTA button row + outline style */
-    .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
-    .btn-outline { background:#fff; color: var(--brand); border: 2px solid var(--brand); }
-    .btn-outline:hover { background: rgba(109,40,217,.06); }
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(17,24,39,.5);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 720px; width: 100%;
+      max-height: 85vh; overflow: auto;
+      padding: 24px;
+      position: relative;
+      line-height: 1.7;
+    }
+    .modal-close {
+      position: absolute; top: 10px; right: 12px;
+      border: 0; background: transparent; cursor: pointer;
+      font-size: 22px; color: var(--ink2);
+    }
+    .modal-close:hover { color: var(--ink); }
+    .modal-card h2 { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -144,7 +169,7 @@
       <div class="hero">
         <h1>Fire-inspired cooking crafted from my travels</h1>
         <div class="cta">
-          <a class="btn" href="/story.html">My Story</a>
+          <a class="btn" id="openStory" href="#">My Story</a>
           <a class="btn btn-outline" href="#menu">My Cooking</a>
         </div>
       </div>
@@ -339,6 +364,22 @@
     </div>
   </footer>
 
+  <!-- My Story Modal -->
+  <div id="storyModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
+      <button class="modal-close" aria-label="Close" id="closeStory">&times;</button>
+      <h2 id="storyTitle">My Story: From the Ocean to the Fire</h2>
+      <p>I’m Milos, a longtime Bay Area resident, new Piedmont neighbor, first-time dad, and former sustainable fashion entrepreneur. Last August, I sold my third company: a zero-plastic apparel brand built on the principles of circularity. We created apparel and footwear designed to last a lifetime, yet capable of being composted back into soil that can grow anything green and alive.</p>
+      <p>After years of building businesses, I’ve decided to follow a different path and one of my deepest personal passions: food and wellness. Cooking has always been a daily ritual in our home, especially since becoming a parent. Friends and family kept telling me, “You should offer this to others.” So I am. And as with everything I’ve built, I’m doing it in a way that feels entirely my own.</p>
+      <p>Spearfishing was my stepping stone to true freshness. That first yellowtail and yellowfin I caught, hours from ocean to plate, taught me that when ingredients are this pure, they need almost nothing more.</p>
+      <p>The same is true for everything I cook with. I want to know the story behind each ingredient: where it came from, how it was made, and who made it. Just as wine lovers trace a winemaker’s path to each vintage, I search for those “winemakers” in every element of food. From hand-pressed olive oil to centuries-old fermentation techniques, the process matters as much as the outcome because the process is the alchemy. It’s a living library, and every ingredient holds a chapter worth studying.</p>
+      <p>To me, flavor is a fine balance between purity and complexity. When done right, flavor is also health. We evaluate growers, makers, and artisans through flavor. When the balance is just right, that evaluation turns into trust. That trust extends to our health, because when food is grown and made with integrity, health follows naturally.</p>
+      <p>Flavor is our contract with the growers, makers, and artisans we work with. The better the flavor, the deeper the bond. My goal is to create the strongest bond possible.</p>
+      <p>Fire is how I honor that contract. It demands patience and presence. Wood is nature’s seasoning, each variety leaving its own signature. Mesquite is the full-bodied cabernet of woods. Fruit woods bring a gentle, fragrant sweetness. Together, they create new possibilities but also demand restraint and intuition to truly heighten each ingredient’s essence.</p>
+      <p>What I share isn’t just a meal. It’s the sum of relationships, craft, and a relentless pursuit of flavor, health, joy, creativity, and sustainability. This fall marks the first chapter: a menu inspired by the fire traditions of San Sebastián and the visionary chef behind Asador Etxebarri, whose mastery has inspired chefs around the world to embrace the art of cooking over live fire.</p>
+    </div>
+  </div>
+
   <script>
     // Message box utility
     function showMessage(message, type = 'warning') {
@@ -350,6 +391,7 @@
       setTimeout(() => { msgBox.classList.remove('show'); }, 3000);
     }
 
+    // ---- Cart / Summary / Persistence ----
     (() => {
       const TAX_RATE = 0.1025;
 
@@ -388,4 +430,126 @@
           `).join('');
         }
 
-        const subtotal = cart.reduce((s,
+        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const tax = subtotal * TAX_RATE;
+        const total = subtotal + tax;
+
+        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+      }
+
+      function onQtyChange(input) {
+        const qty = parseInt(input.value || '0', 10) || 0;
+        const price = parseFloat(input.dataset.price || '0') || 0;
+        const itemSubtotalEl = input.closest('.menu-item')?.querySelector('.item-subtotal');
+        if (itemSubtotalEl) itemSubtotalEl.textContent = (qty * price).toFixed(2);
+        renderSummary();
+        saveCart();
+      }
+
+      function saveCart() {
+        const cart = readCart();
+        localStorage.setItem('ranchlab_cart', JSON.stringify(cart));
+      }
+      function restoreCart() {
+        const saved = localStorage.getItem('ranchlab_cart');
+        if (!saved) return;
+        try {
+          const cart = JSON.parse(saved);
+          cart.forEach(i => {
+            const input = document.querySelector(`.qty[data-name="${i.name}"]`);
+            if (input) input.value = i.qty;
+          });
+        } catch {}
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        restoreCart();
+        document.querySelectorAll('.qty').forEach(input => {
+          onQtyChange(input);
+          input.addEventListener('input',  () => onQtyChange(input));
+          input.addEventListener('change', () => onQtyChange(input));
+        });
+        renderSummary();
+      });
+
+      // Checkout
+      async function createCheckoutSession(payload) {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+
+      document.getElementById('submit-order').addEventListener('click', async () => {
+        const cartItems = Array.from(document.querySelectorAll('.menu-item')).map(card => {
+          const input = card.querySelector('.qty');
+          const name  = input?.dataset.name || '';
+          const price = parseFloat(input?.dataset.price || '0');
+          const quantity = parseInt(input?.value || '0', 10) || 0;
+          return { name, price, quantity };
+        }).filter(i => i.quantity > 0);
+
+        if (!cartItems.length) { showMessage('Please add at least one item.'); return; }
+
+        const customer = {
+          name:  document.getElementById('customerName').value.trim(),
+          email: document.getElementById('customerEmail').value.trim(),
+          phone: document.getElementById('customerPhone').value.trim(),
+        };
+        if (!customer.name || !customer.email || !customer.phone) {
+          showMessage('Please enter name, email, and phone.'); 
+          return;
+        }
+
+        const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
+        const slot = orderType === 'pickup'
+          ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
+          : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
+
+        try {
+          const { url } = await createCheckoutSession({ cartItems, orderType, slot, customer });
+          window.location = url;
+        } catch (e) {
+          showMessage('Checkout failed: ' + e.message);
+        }
+      });
+    })();
+
+    // ---- Fulfillment toggles + time generation ----
+    function selectChoice(type) {
+      const pickupBtn = document.getElementById('pickupBtn');
+      const deliveryBtn = document.getElementById('deliveryBtn');
+      const pickupSchedule = document.getElementById('pickupSchedule');
+      const deliverySchedule = document.getElementById('deliverySchedule');
+      pickupBtn.classList.remove('selected');
+      deliveryBtn.classList.remove('selected');
+      pickupSchedule.style.display = 'none';
+      deliverySchedule.style.display = 'none';
+      if (type === 'pickup') {
+        pickupBtn.classList.add('selected');
+        pickupSchedule.style.display = 'block';
+      } else {
+        deliveryBtn.classList.add('selected');
+        deliverySchedule.style.display = 'block';
+      }
+    }
+
+    function updateTimes(type) {
+      const dateEl = document.getElementById(type + 'Date');
+      const timeEl = document.getElementById(type + 'Time');
+      if (dateEl.value) {
+        timeEl.disabled = false;
+        timeEl.innerHTML = '<option value="">Select time...</option>';
+        // Generate 12:00pm–1:45pm in 15-min increments (each slot is 15 mins; last slot ends at 2:00pm)
+        for (let hour = 12; hour < 14; hour++) {
+          for (let min = 0; min < 60; min += 15) {
+            const startHour = hour > 12 ? hour - 12 : hour;
+            const startSuffix = hour >= 12 ? 'pm' : 'am';
+            const endMin = min + 15;
+            const endHour = endMin >= 60 ? hour + 1 : hour;
+            const endSuffix = endHour >=
