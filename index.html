@@ -123,61 +123,8 @@
     .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
     .btn-small { font-size: 14px; padding: 10px 14px; border-radius: 12px; }
 
-    /* Video placeholder styling */
-    .video-placeholder {
-      width: 100%;
-      height: 300px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .video-placeholder::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="60" cy="40" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="70" r="1.5" fill="%23ffffff" opacity="0.1"/><circle cx="30" cy="80" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="90" cy="30" r="0.8" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    }
-
-    .play-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      opacity: 0.9;
-      z-index: 1;
-      position: relative;
-    }
-    
-    .video-title {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      z-index: 1;
-      position: relative;
-    }
-    
-    .video-description {
-      font-size: 16px;
-      opacity: 0.9;
-      z-index: 1;
-      position: relative;
-    }
-
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 90vh; }
-      .video-placeholder { height: 250px; }
-      .play-icon { font-size: 48px; }
-      .video-title { font-size: 20px; }
-      .video-description { font-size: 14px; }
     }
   </style>
 </head>
@@ -402,27 +349,15 @@
     </div>
   </div>
 
-  <!-- My Cooking Modal (video placeholder) -->
+  <!-- My Cooking Modal (with working video) -->
   <div id="cookingModal" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookingTitle">
       <button class="modal-close" aria-label="Close" id="closeCooking">&times;</button>
       <h2 id="cookingTitle">My Cooking</h2>
-      
-      <!-- Video placeholder - replace this div with your actual video element when ready -->
-      <div class="video-placeholder" id="videoPlaceholder">
-        <div class="play-icon">▶️</div>
-        <div class="video-title">Fire-Inspired Cooking</div>
-        <div class="video-description">Watch Milos craft dishes over live fire</div>
-      </div>
-      
-      <!-- Uncomment and use this when you have your video file ready -->
-      <!--
       <video id="cookingVideo" controls playsinline preload="metadata" style="width:100%; height:auto; border-radius:12px; background:#000;">
-        <source src="YOUR_VIDEO_PATH_HERE.mp4" type="video/mp4" />
-        <source src="YOUR_VIDEO_PATH_HERE.webm" type="video/webm" />
+        <source src="assets/videos/my-cooking.mp4" type="video/mp4" />
         Sorry, your browser doesn't support embedded videos.
       </video>
-      -->
     </div>
   </div>
 
@@ -479,7 +414,7 @@
 
         const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const tax = subtotal * TAX_RATE;
-        const total = subtotal + tax;   // Fixed from "aconst"
+        const total = subtotal + tax;
 
         if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
         if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
@@ -490,4 +425,190 @@
         const qty = parseInt(input.value || '0', 10) || 0;
         const price = parseFloat(input.dataset.price || '0') || 0;
         const itemSubtotalEl = input.closest('.menu-item')?.querySelector('.item-subtotal');
-        if (itemSubtotalEl) itemSubtotalEl.textContent = (qty * price
+        if (itemSubtotalEl) itemSubtotalEl.textContent = (qty * price).toFixed(2);
+        renderSummary();
+        saveCart();
+      }
+
+      function saveCart() {
+        const cart = readCart();
+        try {
+          localStorage.setItem('ranchlab_cart', JSON.stringify(cart));
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      }
+
+      function restoreCart() {
+        try {
+          const saved = localStorage.getItem('ranchlab_cart');
+          if (!saved) return;
+          const cart = JSON.parse(saved);
+          cart.forEach(i => {
+            const input = document.querySelector(`.qty[data-name="${i.name}"]`);
+            if (input) input.value = i.qty;
+          });
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        restoreCart();
+        document.querySelectorAll('.qty').forEach(input => {
+          onQtyChange(input);
+          input.addEventListener('input',  () => onQtyChange(input));
+          input.addEventListener('change', () => onQtyChange(input));
+        });
+        renderSummary();
+      });
+
+      // Checkout
+      async function createCheckoutSession(payload) {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+
+      document.getElementById('submit-order').addEventListener('click', async () => {
+        const cartItems = Array.from(document.querySelectorAll('.menu-item')).map(card => {
+          const input = card.querySelector('.qty');
+          const name  = input?.dataset.name || '';
+          const price = parseFloat(input?.dataset.price || '0');
+          const quantity = parseInt(input?.value || '0', 10) || 0;
+          return { name, price, quantity };
+        }).filter(i => i.quantity > 0);
+
+        if (!cartItems.length) { showMessage('Please add at least one item.'); return; }
+
+        const customer = {
+          name:  document.getElementById('customerName').value.trim(),
+          email: document.getElementById('customerEmail').value.trim(),
+          phone: document.getElementById('customerPhone').value.trim(),
+        };
+        if (!customer.name || !customer.email || !customer.phone) {
+          showMessage('Please enter name, email, and phone.'); 
+          return;
+        }
+
+        const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
+        const slot = orderType === 'pickup'
+          ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
+          : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
+
+        try {
+          const { url } = await createCheckoutSession({ cartItems, orderType, slot, customer });
+          window.location = url;
+        } catch (e) {
+          showMessage('Checkout failed: ' + e.message);
+        }
+      });
+    })();
+
+    // Fulfillment toggles + times
+    function selectChoice(type) {
+      const pickupBtn = document.getElementById('pickupBtn');
+      const deliveryBtn = document.getElementById('deliveryBtn');
+      const pickupSchedule = document.getElementById('pickupSchedule');
+      const deliverySchedule = document.getElementById('deliverySchedule');
+      pickupBtn.classList.remove('selected');
+      deliveryBtn.classList.remove('selected');
+      pickupSchedule.style.display = 'none';
+      deliverySchedule.style.display = 'none';
+      if (type === 'pickup') {
+        pickupBtn.classList.add('selected');
+        pickupSchedule.style.display = 'block';
+      } else {
+        deliveryBtn.classList.add('selected');
+        deliverySchedule.style.display = 'block';
+      }
+    }
+
+    function updateTimes(type) {
+      const dateEl = document.getElementById(type + 'Date');
+      const timeEl = document.getElementById(type + 'Time');
+      if (dateEl.value) {
+        timeEl.disabled = false;
+        timeEl.innerHTML = '<option value="">Select time...</option>';
+        // Generate 12:00pm–1:45pm in 15-min increments (last slot ends at 2:00pm)
+        for (let hour = 12; hour < 14; hour++) {
+          for (let min = 0; min < 60; min += 15) {
+            const startHour = hour > 12 ? hour - 12 : hour;
+            const startSuffix = hour >= 12 ? 'pm' : 'am';
+            const endMin = min + 15;
+            const endHour = endMin >= 60 ? hour + 1 : hour;
+            const endSuffix = endHour >= 12 ? 'pm' : 'am';
+            const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
+            const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
+            const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
+            const option = document.createElement('option');
+            option.value = start;
+            option.textContent = start + ' - ' + end;
+            timeEl.appendChild(option);
+          }
+        }
+      } else {
+        timeEl.disabled = true;
+        timeEl.innerHTML = '<option value="">First select a date</option>';
+      }
+    }
+
+    // Modals (Story + Cooking)
+    (function () {
+      // Story modal
+      const storyOpen = document.getElementById('openStory');
+      const storyModal = document.getElementById('storyModal');
+      const storyClose = document.getElementById('closeStory');
+
+      function openStory(e) {
+        e?.preventDefault();
+        storyModal.classList.add('show');
+        storyModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeStory() {
+        storyModal.classList.remove('show');
+        storyModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      storyOpen.addEventListener('click', openStory);
+      storyClose.addEventListener('click', closeStory);
+      storyModal.addEventListener('click', (e) => { if (e.target === storyModal) closeStory(); });
+
+      // Cooking modal (with video)
+      const cookOpen = document.getElementById('openCooking');
+      const cookModal = document.getElementById('cookingModal');
+      const cookClose = document.getElementById('closeCooking');
+      const cookVideo = document.getElementById('cookingVideo');
+
+      function openCook(e) {
+        e?.preventDefault();
+        cookModal.classList.add('show');
+        cookModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeCook() {
+        if (cookVideo) { cookVideo.pause(); cookVideo.currentTime = 0; }
+        cookModal.classList.remove('show');
+        cookModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      cookOpen.addEventListener('click', openCook);
+      cookClose.addEventListener('click', closeCook);
+      cookModal.addEventListener('click', (e) => { if (e.target === cookModal) closeCook(); });
+
+      // ESC closes whichever is open
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (storyModal.classList.contains('show')) closeStory();
+          if (cookModal.classList.contains('show')) closeCook();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
