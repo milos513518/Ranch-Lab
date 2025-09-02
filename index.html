@@ -61,12 +61,12 @@
     .menu-item:hover { border-color: var(--brand); }
     .muted { color: var(--ink2); }
 
-    .btn { appearance: none; border: 0; background: var(--brand); color: #fff; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background .2s; text-align: center; display: inline-block; }
+    .btn { appearance: none; border: 0; background: var(--brand); color: #fff; padding: 12px 20px; border-radius: 16px; cursor: pointer; font-weight: 700; font-size: 18px; transition: background .2s; text-align: center; display: inline-block; }
     .btn:hover { background: #5b21b6; }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
-    .btn-outline { background:#fff; color: var(--brand); border: 2px solid var(--brand); }
+    .btn-outline { background:#fff; color: var(--brand); border: 3px solid var(--brand); border-radius: 16px; padding: 12px 20px; font-weight: 700; font-size: 18px; }
     .btn-outline:hover { background: rgba(109,40,217,.06); }
-    .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+    .cta { display:flex; gap:24px; flex-wrap:wrap; margin-top:12px; }
 
     .form-row { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
     input[type=text],input[type=email],input[type=tel],input[type=number],select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; background: #fff; }
@@ -103,7 +103,7 @@
     .message-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--warning); color: #fff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, .1); z-index: 100; transition: opacity .3s; opacity: 0; }
     .message-box.show { opacity: 1; }
 
-    /* Modal */
+    /* Modal (shared for Story & Cooking) */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
     .modal-backdrop.show { display: flex; }
     .modal-card {
@@ -111,8 +111,8 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       box-shadow: var(--shadow);
-      width: 20cm;   /* 2x wider */
-      height: 20cm;  /* 2x taller */
+      width: 20cm;
+      height: 20cm;
       overflow: auto;
       padding: 20px;
       position: relative;
@@ -121,6 +121,9 @@
     .modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink); }
     .modal-close:hover { opacity: .8; }
     .modal-card h2 { margin: 0 24px 8px 0; }
+
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .btn-small { font-size: 14px; padding: 10px 14px; border-radius: 12px; }
 
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 90vh; }
@@ -136,13 +139,13 @@
   <main>
     <div id="message-box" class="message-box"></div>
 
-    <!-- Intro (subtitle removed, two CTAs added) -->
+    <!-- Intro -->
     <section id="intro">
       <div class="hero">
         <h1>Fire-inspired cooking crafted from my travels</h1>
         <div class="cta">
           <a class="btn" id="openStory" href="#">My Story</a>
-          <a class="btn btn-outline" href="#menu">My Cooking</a>
+          <a class="btn btn-outline" id="openCooking" href="#">My Cooking</a>
         </div>
       </div>
     </section>
@@ -156,17 +159,13 @@
           <h3>Choose Your Menu</h3>
           <p class="muted">Select from our seasonal offerings crafted with intention</p>
         </div>
-
         <div class="how-arrow">→</div>
-
         <div class="how-card">
           <div class="how-num">2</div>
           <h3>Select Pickup or Delivery</h3>
           <p class="muted">Pick up at our kitchen or arrange Uber delivery</p>
         </div>
-
         <div class="how-arrow">→</div>
-
         <div class="how-card">
           <div class="how-num">3</div>
           <h3>Order</h3>
@@ -349,6 +348,27 @@
       <p>Flavor is our contract with the growers, makers, and artisans we work with. The better the flavor, the deeper the bond. My goal is to create the strongest bond possible.</p>
       <p>Fire is how I honor that contract. It demands patience and presence. Wood is nature’s seasoning, each variety leaving its own signature. Mesquite is the full-bodied cabernet of woods. Fruit woods bring a gentle, fragrant sweetness. Together, they create new possibilities but also demand restraint and intuition to truly heighten each ingredient’s essence.</p>
       <p>What I share isn’t just a meal. It’s the sum of relationships, craft, and a relentless pursuit of flavor, health, joy, creativity, and sustainability. This fall marks the first chapter: a menu inspired by the fire traditions of San Sebastián and the visionary chef behind Asador Etxebarri, whose mastery has inspired chefs around the world to embrace the art of cooking over live fire.</p>
+    </div>
+  </div>
+
+  <!-- My Cooking Modal (opens @myranchlab) -->
+  <div id="cookingModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookingTitle">
+      <button class="modal-close" aria-label="Close" id="closeCooking">&times;</button>
+      <h2 id="cookingTitle">My Cooking</h2>
+      <p class="muted">Visit our Instagram to see current dishes, prep, and fire sessions.</p>
+      <div class="btn-row">
+        <!-- Open in Instagram native app -->
+        <a class="btn btn-small" href="instagram://user?username=myranchlab">Open in Instagram App</a>
+        <!-- Open web profile in a new tab -->
+        <a class="btn btn-outline btn-small" href="https://www.instagram.com/myranchlab/" target="_blank" rel="noopener">Open on the Web</a>
+      </div>
+
+      <!-- Optional notice in case iframe is desired later
+      <div class="muted" style="margin-top:12px;font-size:14px;">
+        Note: Instagram doesn’t allow full profiles to load inside other sites. Use the buttons above.
+      </div>
+      -->
     </div>
   </div>
 
@@ -539,36 +559,38 @@
       }
     }
 
-    // Modal: open/close logic
-    (function modal() {
-      const openBtn = document.getElementById('openStory');
-      const modal = document.getElementById('storyModal');
-      const closeBtn = document.getElementById('closeStory');
+    // Modal handling (Story + Cooking)
+    (function modals() {
+      // Story
+      const storyOpen = document.getElementById('openStory');
+      const storyModal = document.getElementById('storyModal');
+      const storyClose = document.getElementById('closeStory');
 
-      function openModal(e){
-        if (e) e.preventDefault();        // prevent navigation
-        modal.classList.add('show');
-        modal.setAttribute('aria-hidden', 'false');
-        closeBtn.focus();
-        document.body.style.overflow = 'hidden';
-      }
-      function closeModal(){
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
+      function openStory(e){ if (e) e.preventDefault(); storyModal.classList.add('show'); storyModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+      function closeStory(){ storyModal.classList.remove('show'); storyModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 
-      if (openBtn) openBtn.addEventListener('click', openModal);
-      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      storyOpen.addEventListener('click', openStory);
+      storyClose.addEventListener('click', closeStory);
+      storyModal.addEventListener('click', e => { if (e.target === storyModal) closeStory(); });
 
-      // click outside (backdrop)
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
+      // Cooking
+      const cookOpen = document.getElementById('openCooking');
+      const cookModal = document.getElementById('cookingModal');
+      const cookClose = document.getElementById('closeCooking');
 
-      // Esc key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+      function openCook(e){ if (e) e.preventDefault(); cookModal.classList.add('show'); cookModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+      function closeCook(){ cookModal.classList.remove('show'); cookModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+
+      cookOpen.addEventListener('click', openCook);
+      cookClose.addEventListener('click', closeCook);
+      cookModal.addEventListener('click', e => { if (e.target === cookModal) closeCook(); });
+
+      // Escape key for both
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          if (storyModal.classList.contains('show')) closeStory();
+          if (cookModal.classList.contains('show')) closeCook();
+        }
       });
     })();
   </script>
