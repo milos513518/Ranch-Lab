@@ -86,8 +86,16 @@
 
     .btn-outline { background: #fff; color: var(--brand); border: 3px solid var(--brand); border-radius: 16px; padding: 12px 20px; font-weight: 700; font-size: 18px; }
     .btn-outline:hover { background: rgba(109,40,217,.06); }
-
-    .cta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+    
+    .cta { 
+      display: flex; 
+      gap: 24px; 
+      flex-wrap: wrap; 
+      margin-top: 12px; 
+    }
+    .cta .btn, .cta .btn-outline {
+      min-width: 150px; /* Adjust this value to set the desired button width */
+    }
 
     .form-row { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
     input[type=text],input[type=email],input[type=tel],input[type=number],select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; background: #fff; }
@@ -130,7 +138,33 @@
     /* Modals */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
     .modal-backdrop.show { display: flex; }
-    .modal-card { background: var(--modal-purple); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); width: 384px; height: 650px; /* Increased height for 4x3 grid (12 images) */ overflow: hidden; padding: 0; position: relative; color: #1f2937; }
+    .modal-card { 
+      background: var(--modal-purple); 
+      border: 1px solid var(--line); 
+      border-radius: 16px; 
+      box-shadow: var(--shadow); 
+      width: 384px; 
+      height: 650px; 
+      overflow: hidden; 
+      padding: 0; 
+      position: relative; 
+      color: #1f2937; 
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-card > * {
+      padding-left: 1cm;
+      padding-right: 1cm;
+    }
+    .modal-card h2 {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .modal-card .modal-close {
+      top: 10px;
+      right: 12px;
+      padding: 0; /* Override padding for the close button */
+    }
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 80vh; }
     }
@@ -449,7 +483,7 @@
       <h2 id="summerTitle">Summer: Baja</h2>
       <p>My introduction to Baja began in Cerritos and Todos Santos. Baja is a waterman's dream. The menu will be inspired by my favorite fish, Kampachi (amberjack) and Anthony Bourdain's beloved Ensenada cevichería, La Guerrerense.</p>
       <p>Ceviche, pastor, short rib, nopales, agave and more.</p>
-    <img src="https://i.ibb.co/L95m606/baja.jpg" alt="Baja Ceviche" style="width:100%; height:auto; display:block; margin-top: 20px; border-radius: 8px;" />
+      <img src="https://i.ibb.co/L95m606/baja.jpg" alt="Baja Ceviche" style="width:100%; height:auto; display:block; margin-top: 20px; border-radius: 8px;" />
     </div>
   </div>
 
