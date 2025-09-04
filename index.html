@@ -571,7 +571,6 @@
     function updateTimes(type) {
       const dateEl = document.getElementById(type + 'Date');
       const timeEl = document.getElementById(type + 'Time');
-      const reserveBtn = document.getElementById('reserveUber');
       
       if (dateEl.value) {
         timeEl.disabled = false;
@@ -593,28 +592,30 @@
             timeEl.appendChild(option);
           }
         }
-        
-        // Add event listener to show Reserve Uber button when time is selected
-        if (type === 'delivery') {
-          timeEl.addEventListener('change', function() {
-            if (this.value && reserveBtn) {
-              reserveBtn.style.display = 'block';
-            }
-          });
-        }
       } else {
         timeEl.disabled = true;
         timeEl.innerHTML = '<option value="">First select a date</option>';
+        const reserveBtn = document.getElementById('reserveUber');
         if (reserveBtn && type === 'delivery') {
           reserveBtn.style.display = 'none';
         }
       }
     }
 
-    // Reserve Uber functionality
+    // Show Reserve Uber button when time is selected
     document.addEventListener('DOMContentLoaded', () => {
+      const deliveryTime = document.getElementById('deliveryTime');
       const reserveBtn = document.getElementById('reserveUber');
-      if (reserveBtn) {
+      
+      if (deliveryTime && reserveBtn) {
+        deliveryTime.addEventListener('change', function() {
+          if (this.value) {
+            reserveBtn.style.display = 'block';
+          } else {
+            reserveBtn.style.display = 'none';
+          }
+        });
+        
         reserveBtn.addEventListener('click', () => {
           const date = document.getElementById('deliveryDate').value;
           const time = document.getElementById('deliveryTime').value;
