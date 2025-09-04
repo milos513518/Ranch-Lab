@@ -47,7 +47,7 @@
     h1 { font-size: 32px; margin: 0 0 8px; font-weight: 700; }
     h2 { font-size: 24px; margin: 0 0 16px; font-weight: 600; }
     h3 { font-size: 18px; margin: 0 0 8px; font-weight: 600; }
-    p  { color: var(--ink2); margin: 8px 0; }
+    p { color: var(--ink2); margin: 8px 0; }
 
     /* How it works */
     .how-wrap { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: center; }
@@ -98,6 +98,7 @@
     .schedule-explanation { color: var(--ink2); margin: 0 0 16px; font-style: italic; text-align: center; }
     .date-time-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 768px) { .date-time-selector { grid-template-columns: 1fr; } }
+    .delivery-cta-flex { display: flex; justify-content: center; margin-top: 16px; }
 
     .order-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #e5e7eb; }
     .order-item:last-child { border-bottom: none; }
@@ -106,6 +107,8 @@
     .order-item-price { font-weight: 500; color: var(--ink); }
 
     footer { max-width: 900px; margin: 28px auto; padding: 0 16px 40px; color: var(--ink2); text-align: center; }
+    footer hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+    footer .note { margin-top: 12px; }
     .hero { display: flex; flex-direction: column; gap: 12px; margin: 8px 0 8px; }
 
     /* Message Box */
@@ -119,22 +122,65 @@
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 80vh; }
     }
+    .modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink); }
+    .modal-close.btn-cooking { background: rgba(255, 255, 255, 0.9); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; z-index: 1001; }
+    .modal-content { padding: 20px; width: 20cm; height: 20cm; overflow: auto; }
 
     .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
-    .btn-small { font-size: 14px; padding: 10px 14px; border-radius: 12px; }
+    .btn-small { font-size: 14px; padding: 8px 16px; border-radius: 12px; }
+    .menu-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+
+    /* Instagram Placeholder styles */
+    .instagram-placeholder {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      background: #fafafa;
+      border-radius: 16px;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .instagram-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .profile-pic-placeholder {
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      flex-grow: 0;
+      height: 40px;
+      margin-right: 14px;
+      width: 40px;
+    }
+    .text-placeholder {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+    }
+    .line-1, .line-2 {
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      flex-grow: 0;
+      height: 14px;
+      margin-bottom: 6px;
+    }
+    .line-1 { width: 100px; }
+    .line-2 { width: 60px; }
   </style>
 </head>
 
 <body>
-  <!-- Header (brand + tabs removed per your request) -->
   <header>
-    <nav class="nav" aria-label="primary"><!-- empty on purpose --></nav>
+    <nav class="nav" aria-label="primary"></nav>
   </header>
 
   <main>
     <div id="message-box" class="message-box"></div>
 
-    <!-- Intro -->
     <section id="intro">
       <div class="hero">
         <h1>Fire-inspired cooking crafted from my travels</h1>
@@ -145,7 +191,6 @@
       </div>
     </section>
 
-    <!-- How It Works -->
     <section id="how">
       <h2>How It Works</h2>
       <div class="how-wrap">
@@ -169,13 +214,12 @@
       </div>
     </section>
 
-    <!-- Menu -->
     <section id="menu">
-      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+      <div class="menu-header">
         <h2 style="margin: 0;">Fall Menu: Ember &amp; Sea</h2>
-        <button class="btn btn-outline btn-small" id="openWinter" style="font-size: 14px; padding: 8px 16px;">Winter: Dolomites &amp; Piedmont</button>
-        <button class="btn btn-outline btn-small" id="openSpring" style="font-size: 14px; padding: 8px 16px;">Spring: Japan</button>
-        <button class="btn btn-outline btn-small" id="openSummer" style="font-size: 14px; padding: 8px 16px;">Summer: Baja</button>
+        <button class="btn btn-outline btn-small" id="openWinter">Winter: Dolomites &amp; Piedmont</button>
+        <button class="btn btn-outline btn-small" id="openSpring">Spring: Japan</button>
+        <button class="btn btn-outline btn-small" id="openSummer">Summer: Baja</button>
       </div>
       <div class="grid">
         <div class="menu-item">
@@ -224,17 +268,16 @@
       </div>
     </section>
 
-    <!-- Order -->
     <section id="order">
       <h2>Select Pickup or Delivery</h2>
 
       <div class="fulfillment-options">
-        <button class="fulfillment-btn" id="pickupBtn" onclick="selectChoice('pickup')">
+        <button class="fulfillment-btn" id="pickupBtn">
           <div class="fulfillment-icon">📍</div>
           <h3>Pick Up</h3>
           <p>Select your pickup date &amp; time</p>
         </button>
-        <button class="fulfillment-btn" id="deliveryBtn" onclick="selectChoice('delivery')">
+        <button class="fulfillment-btn" id="deliveryBtn">
           <div class="fulfillment-icon">🚚</div>
           <h3>Delivery</h3>
           <p>Via Uber (you pay Uber separately)</p>
@@ -246,7 +289,7 @@
         <div class="date-time-selector">
           <div class="form-row">
             <label>Select Date</label>
-            <select id="pickupDate" onchange="updateTimes('pickup')">
+            <select id="pickupDate">
               <option value="">Choose a date...</option>
               <option value="2025-10-04">October 4, 2025</option>
               <option value="2025-10-05">October 5, 2025</option>
@@ -270,7 +313,7 @@
         <div class="date-time-selector">
           <div class="form-row">
             <label>Select Date</label>
-            <select id="deliveryDate" onchange="updateTimes('delivery')">
+            <select id="deliveryDate">
               <option value="">Choose a date...</option>
               <option value="2025-10-04">October 4, 2025</option>
               <option value="2025-10-05">October 5, 2025</option>
@@ -287,10 +330,12 @@
             </select>
           </div>
         </div>
+        <div class="delivery-cta-flex">
+          <button id="reserveUber" class="btn" style="display:none;">Reserve Uber</button>
+        </div>
       </div>
     </section>
 
-    <!-- Payment / Summary -->
     <section id="payment">
       <h2>Order</h2>
 
@@ -327,17 +372,16 @@
   </main>
 
   <footer>
-    <hr style="border:0; border-top:1px solid var(--line); margin:20px 0;"/>
-    <div class="note" style="margin-top:12px;">
+    <hr />
+    <div class="note">
       Questions? <a href="mailto:milos@ranchlab.is">milos@ranchlab.is</a> · 
       <a href="tel:+13106660797">(310) 666-0797</a>
     </div>
   </footer>
 
-  <!-- My Story Modal -->
   <div id="storyModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="storyTitle" style="width: 20cm; height: 20cm; padding: 20px; overflow: auto;">
-      <button class="modal-close" aria-label="Close" id="closeStory" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+    <div class="modal-card modal-content" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
+      <button class="modal-close" aria-label="Close" id="closeStory">&times;</button>
       <h2 id="storyTitle">My Story: From the Ocean to the Fire</h2>
       <p>I'm Milos, a longtime Bay Area resident, new Piedmont neighbor, first-time dad, and former sustainable fashion entrepreneur. Last August, I sold my third company: a zero-plastic apparel brand built on the principles of circularity. We created apparel and footwear designed to last a lifetime, yet capable of being composted back into soil that can grow anything green and alive.</p>
       <p>After years of building businesses, I've decided to follow a different path and one of my deepest personal passions: food and wellness. Cooking has always been a daily ritual in our home, especially since becoming a parent. Friends and family kept telling me, "You should offer this to others." So I am. And as with everything I've built, I'm doing it in a way that feels entirely my own.</p>
@@ -350,48 +394,44 @@
     </div>
   </div>
 
-  <!-- Winter Modal -->
   <div id="winterModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="winterTitle" style="width: 500px; height: 300px; padding: 20px;">
-      <button class="modal-close" aria-label="Close" id="closeWinter" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="winterTitle">
+      <button class="modal-close" aria-label="Close" id="closeWinter">&times;</button>
       <h2 id="winterTitle">Winter: Dolomites &amp; Piedmont</h2>
       <p>Skiing and hiking initially drove me to this region. A memory that's inspiring the winter, alpine menu is Italian-Austrian chef, Norbert Niederkofler's Cook the Mountain philosophy.</p>
       <p>Ingredients that I am thinking about are chestnuts, polenta, char, trout, truffles, wild boar, veal, fermented root veggies.</p>
     </div>
   </div>
 
-  <!-- Spring Modal -->
   <div id="springModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="springTitle" style="width: 500px; height: 300px; padding: 20px;">
-      <button class="modal-close" aria-label="Close" id="closeSpring" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="springTitle">
+      <button class="modal-close" aria-label="Close" id="closeSpring">&times;</button>
       <h2 id="springTitle">Spring: Japan</h2>
       <p>I'd love to spend time living in Japan. My first true introduction came through my friend's Tokyo restaurant, Udatsu, which earned the fastest Michelin star in Japan, and through skiing the legendary powder of Hokkaido.</p>
       <p>For cherry blossom season, the menu will center on cherry wood smoke, yakitori, yellowtail, king crab, saba, and wagyu, miso and koji fermentation.</p>
     </div>
   </div>
 
-  <!-- Summer Modal -->
   <div id="summerModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="summerTitle" style="width: 500px; height: 300px; padding: 20px;">
-      <button class="modal-close" aria-label="Close" id="closeSummer" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="summerTitle">
+      <button class="modal-close" aria-label="Close" id="closeSummer">&times;</button>
       <h2 id="summerTitle">Summer: Baja</h2>
       <p>My introduction to Baja began in Cerritos and Todos Santos. Baja is a waterman's dream. The menu will be inspired by my favorite fish, Kampachi (amberjack) and Anthony Bourdain's beloved Ensenada cevichería, La Guerrerense.</p>
       <p>Ceviche, pastor, short rib, nopales, agave and more.</p>
     </div>
   </div>
 
-  <!-- My Cooking Modal (with Instagram feed) -->
   <div id="cookingModal" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookingTitle">
-      <button class="modal-close" aria-label="Close" id="closeCooking" style="position: absolute; top: 10px; right: 12px; border: 0; background: rgba(255,255,255,0.9); cursor: pointer; font-size: 22px; color: var(--ink); z-index: 1001; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">&times;</button>
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/myranchlab/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:16px; box-shadow:none; margin:0; width:100%; height:100%; min-height:100%; padding:0; position: absolute; top: 0; left: 0;">
-        <div style="padding:16px;">
-          <a href="https://www.instagram.com/myranchlab/" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
-            <div style="display: flex; flex-direction: row; align-items: center;">
-              <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div>
-              <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
-                <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div>
-                <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div>
+      <button class="modal-close btn-cooking" aria-label="Close" id="closeCooking">&times;</button>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/myranchlab/" data-instgrm-version="14">
+        <div class="instagram-placeholder">
+          <a href="https://www.instagram.com/myranchlab/" target="_blank">
+            <div class="instagram-header">
+              <div class="profile-pic-placeholder"></div>
+              <div class="text-placeholder">
+                <div class="line-1"></div>
+                <div class="line-2"></div>
               </div>
             </div>
           </a>
@@ -402,7 +442,7 @@
   </div>
 
   <script>
-    // Toast / message box
+    // A single, global utility function for displaying messages
     function showMessage(message, type = 'warning') {
       const msgBox = document.getElementById('message-box');
       if (!msgBox) return;
@@ -412,17 +452,17 @@
       setTimeout(() => { msgBox.classList.remove('show'); }, 3000);
     }
 
-    // Cart + Summary + Checkout
-    (function () {
+    // A module for handling the shopping cart and order summary
+    const Cart = (function () {
       const TAX_RATE = 0.1025;
 
       function readCart() {
         return Array.from(document.querySelectorAll('.menu-item'))
           .map(card => {
             const input = card.querySelector('.qty');
-            const name  = input?.dataset.name || '';
+            const name = input?.dataset.name || '';
             const price = parseFloat(input?.dataset.price || '0');
-            const qty   = parseInt(input?.value || '0', 10) || 0;
+            const qty = parseInt(input?.value || '0', 10) || 0;
             return { name, price, qty };
           })
           .filter(i => i.qty > 0);
@@ -430,7 +470,6 @@
 
       function renderSummary() {
         const cart = readCart();
-
         const summaryEl = document.getElementById('orderSummary');
         const subEl = document.getElementById('subtotal');
         const taxEl = document.getElementById('tax');
@@ -447,7 +486,7 @@
                 <div class="order-item-name">${i.name}</div>
                 <div class="order-item-qty">Qty: ${i.qty}</div>
               </div>
-              <div class="order-item-price">${(i.price * i.qty).toFixed(2)}</div>
+              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
             </div>
           `).join('');
         }
@@ -456,9 +495,9 @@
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
 
-        if (subEl) subEl.textContent = `${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
+        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
       }
 
       function onQtyChange(input) {
@@ -472,11 +511,7 @@
 
       function saveCart() {
         const cart = readCart();
-        try {
-          localStorage.setItem('ranchlab_cart', JSON.stringify(cart));
-        } catch (e) {
-          // Ignore localStorage errors
-        }
+        try { localStorage.setItem('ranchlab_cart', JSON.stringify(cart)); } catch (e) { /* Ignore localStorage errors */ }
       }
 
       function restoreCart() {
@@ -488,50 +523,197 @@
             const input = document.querySelector(`.qty[data-name="${i.name}"]`);
             if (input) input.value = i.qty;
           });
-        } catch (e) {
-          // Ignore localStorage errors
+        } catch (e) { /* Ignore localStorage errors */ }
+      }
+      
+      function setupEventListeners() {
+        document.querySelectorAll('.qty').forEach(input => {
+          onQtyChange(input);
+          input.addEventListener('input', () => onQtyChange(input));
+          input.addEventListener('change', () => onQtyChange(input));
+        });
+      }
+
+      function init() {
+        restoreCart();
+        setupEventListeners();
+        renderSummary();
+      }
+
+      return {
+        init: init,
+        readCart: readCart
+      };
+    })();
+
+    // A module for handling fulfillment options (Pickup/Delivery/Uber)
+    const Fulfillment = (function () {
+      function selectChoice(type) {
+        const pickupBtn = document.getElementById('pickupBtn');
+        const deliveryBtn = document.getElementById('deliveryBtn');
+        const pickupSchedule = document.getElementById('pickupSchedule');
+        const deliverySchedule = document.getElementById('deliverySchedule');
+        pickupBtn.classList.remove('selected');
+        deliveryBtn.classList.remove('selected');
+        pickupSchedule.style.display = 'none';
+        deliverySchedule.style.display = 'none';
+        if (type === 'pickup') {
+          pickupBtn.classList.add('selected');
+          pickupSchedule.style.display = 'block';
+        } else {
+          deliveryBtn.classList.add('selected');
+          deliverySchedule.style.display = 'block';
         }
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-        restoreCart();
-        document.querySelectorAll('.qty').forEach(input => {
-          onQtyChange(input);
-          input.addEventListener('input',  () => onQtyChange(input));
-          input.addEventListener('change', () => onQtyChange(input));
-        });
-        renderSummary();
-      });
+      function updateTimes(type) {
+        const dateEl = document.getElementById(type + 'Date');
+        const timeEl = document.getElementById(type + 'Time');
+        const reserveBtn = document.getElementById('reserveUber');
 
-      // Checkout
-      async function createCheckoutSession(payload) {
+        if (dateEl.value) {
+          timeEl.disabled = false;
+          timeEl.innerHTML = '<option value="">Select time...</option>';
+          for (let hour = 12; hour < 14; hour++) {
+            for (let min = 0; min < 60; min += 15) {
+              const startHour = hour > 12 ? hour - 12 : hour;
+              const startSuffix = hour >= 12 ? 'pm' : 'am';
+              const endMin = min + 15;
+              const endHour = endMin >= 60 ? hour + 1 : hour;
+              const endSuffix = endHour >= 12 ? 'pm' : 'am';
+              const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
+              const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
+              const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
+              const option = document.createElement('option');
+              option.value = start;
+              option.textContent = start + ' - ' + end;
+              timeEl.appendChild(option);
+            }
+          }
+        } else {
+          timeEl.disabled = true;
+          timeEl.innerHTML = '<option value="">First select a date</option>';
+        }
+        if (reserveBtn) {
+          reserveBtn.style.display = timeEl.value ? 'block' : 'none';
+        }
+      }
+
+      function setupEventListeners() {
+        document.getElementById('pickupBtn').addEventListener('click', () => selectChoice('pickup'));
+        document.getElementById('deliveryBtn').addEventListener('click', () => selectChoice('delivery'));
+        document.getElementById('pickupDate').addEventListener('change', () => updateTimes('pickup'));
+        document.getElementById('deliveryDate').addEventListener('change', () => updateTimes('delivery'));
+
+        const deliveryTime = document.getElementById('deliveryTime');
+        const reserveUberBtn = document.getElementById('reserveUber');
+
+        if (deliveryTime) {
+          deliveryTime.addEventListener('change', () => {
+            if (reserveUberBtn) reserveUberBtn.style.display = deliveryTime.value ? 'block' : 'none';
+          });
+        }
+
+        if (reserveUberBtn) {
+          reserveUberBtn.addEventListener('click', () => {
+            const date = document.getElementById('deliveryDate').value;
+            const time = document.getElementById('deliveryTime').value;
+            if (date && time) {
+              showMessage('Uber reservation feature coming soon! Please complete your order first.', 'warning');
+            }
+          });
+        }
+      }
+
+      function init() {
+        setupEventListeners();
+      }
+
+      return {
+        init: init
+      };
+    })();
+
+    // A module for handling modals
+    const Modals = (function () {
+      function setupModal(triggerId, modalId, closeId) {
+        const openBtn = document.getElementById(triggerId);
+        const modal = document.getElementById(modalId);
+        const closeBtn = document.getElementById(closeId);
+
+        if (!openBtn || !modal || !closeBtn) return;
+
+        function openModal(e) {
+          e?.preventDefault();
+          modal.classList.add('show');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+          modal.classList.remove('show');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+
+        return closeModal;
+      }
+
+      function init() {
+        const closers = [
+          setupModal('openStory', 'storyModal', 'closeStory'),
+          setupModal('openWinter', 'winterModal', 'closeWinter'),
+          setupModal('openSpring', 'springModal', 'closeSpring'),
+          setupModal('openSummer', 'summerModal', 'closeSummer'),
+          setupModal('openCooking', 'cookingModal', 'closeCooking')
+        ].filter(Boolean);
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            closers.forEach(closeFn => closeFn());
+          }
+        });
+      }
+
+      return {
+        init: init
+      };
+    })();
+
+    // A module for handling the checkout process with dependency injection
+    const Checkout = (function (cartReader, messageSender) {
+      async function createSession(payload) {
+        // This is a placeholder for your actual API call
         const res = await fetch('/api/checkout', {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error(await res.text());
         return res.json();
       }
 
-      document.getElementById('submit-order').addEventListener('click', async () => {
-        const cartItems = Array.from(document.querySelectorAll('.menu-item')).map(card => {
-          const input = card.querySelector('.qty');
-          const name  = input?.dataset.name || '';
-          const price = parseFloat(input?.dataset.price || '0');
-          const quantity = parseInt(input?.value || '0', 10) || 0;
-          return { name, price, quantity };
-        }).filter(i => i.quantity > 0);
+      async function handleSubmit() {
+        const cartItems = cartReader();
 
-        if (!cartItems.length) { showMessage('Please add at least one item.'); return; }
+        if (!cartItems.length) {
+          messageSender('Please add at least one item.');
+          return;
+        }
 
         const customer = {
-          name:  document.getElementById('customerName').value.trim(),
+          name: document.getElementById('customerName').value.trim(),
           email: document.getElementById('customerEmail').value.trim(),
           phone: document.getElementById('customerPhone').value.trim(),
         };
         if (!customer.name || !customer.email || !customer.phone) {
-          showMessage('Please enter name, email, and phone.'); 
+          messageSender('Please enter name, email, and phone.');
           return;
         }
 
@@ -541,204 +723,29 @@
           : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
 
         try {
-          const { url } = await createCheckoutSession({ cartItems, orderType, slot, customer });
+          const { url } = await createSession({ cartItems, orderType, slot, customer });
           window.location = url;
         } catch (e) {
-          showMessage('Checkout failed: ' + e.message);
-        }
-      });
-    })();
-
-    // Fulfillment toggles + times
-    function selectChoice(type) {
-      const pickupBtn = document.getElementById('pickupBtn');
-      const deliveryBtn = document.getElementById('deliveryBtn');
-      const pickupSchedule = document.getElementById('pickupSchedule');
-      const deliverySchedule = document.getElementById('deliverySchedule');
-      pickupBtn.classList.remove('selected');
-      deliveryBtn.classList.remove('selected');
-      pickupSchedule.style.display = 'none';
-      deliverySchedule.style.display = 'none';
-      if (type === 'pickup') {
-        pickupBtn.classList.add('selected');
-        pickupSchedule.style.display = 'block';
-      } else {
-        deliveryBtn.classList.add('selected');
-        deliverySchedule.style.display = 'block';
-      }
-    }
-
-    function updateTimes(type) {
-      const dateEl = document.getElementById(type + 'Date');
-      const timeEl = document.getElementById(type + 'Time');
-      
-      if (dateEl.value) {
-        timeEl.disabled = false;
-        timeEl.innerHTML = '<option value="">Select time...</option>';
-        // Generate 12:00pm–1:45pm in 15-min increments (last slot ends at 2:00pm)
-        for (let hour = 12; hour < 14; hour++) {
-          for (let min = 0; min < 60; min += 15) {
-            const startHour = hour > 12 ? hour - 12 : hour;
-            const startSuffix = hour >= 12 ? 'pm' : 'am';
-            const endMin = min + 15;
-            const endHour = endMin >= 60 ? hour + 1 : hour;
-            const endSuffix = endHour >= 12 ? 'pm' : 'am';
-            const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
-            const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
-            const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
-            const option = document.createElement('option');
-            option.value = start;
-            option.textContent = start + ' - ' + end;
-            timeEl.appendChild(option);
-          }
-        }
-      } else {
-        timeEl.disabled = true;
-        timeEl.innerHTML = '<option value="">First select a date</option>';
-        const reserveBtn = document.getElementById('reserveUber');
-        if (reserveBtn && type === 'delivery') {
-          reserveBtn.style.display = 'none';
+          messageSender('Checkout failed: ' + e.message);
         }
       }
-    }
 
-    // Show Reserve Uber button when time is selected
+      function init() {
+        document.getElementById('submit-order').addEventListener('click', handleSubmit);
+      }
+
+      return {
+        init: init
+      };
+    })(Cart.readCart, showMessage); // Inject dependencies here
+
+    // Initialize all modules on page load
     document.addEventListener('DOMContentLoaded', () => {
-      const deliveryTime = document.getElementById('deliveryTime');
-      const reserveBtn = document.getElementById('reserveUber');
-      
-      if (deliveryTime && reserveBtn) {
-        deliveryTime.addEventListener('change', function() {
-          if (this.value) {
-            reserveBtn.style.display = 'block';
-          } else {
-            reserveBtn.style.display = 'none';
-          }
-        });
-        
-        reserveBtn.addEventListener('click', () => {
-          const date = document.getElementById('deliveryDate').value;
-          const time = document.getElementById('deliveryTime').value;
-          if (date && time) {
-            showMessage('Uber reservation feature coming soon! Please complete your order first.', 'warning');
-          }
-        });
-      }
+      Cart.init();
+      Fulfillment.init();
+      Modals.init();
+      Checkout.init();
     });
-
-    // Modals (Story + Cooking + Winter + Spring + Summer)
-    (function () {
-      // Story modal
-      const storyOpen = document.getElementById('openStory');
-      const storyModal = document.getElementById('storyModal');
-      const storyClose = document.getElementById('closeStory');
-
-      function openStory(e) {
-        e?.preventDefault();
-        storyModal.classList.add('show');
-        storyModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeStory() {
-        storyModal.classList.remove('show');
-        storyModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      if (storyOpen) storyOpen.addEventListener('click', openStory);
-      if (storyClose) storyClose.addEventListener('click', closeStory);
-      if (storyModal) storyModal.addEventListener('click', (e) => { if (e.target === storyModal) closeStory(); });
-
-      // Winter modal
-      const winterOpen = document.getElementById('openWinter');
-      const winterModal = document.getElementById('winterModal');
-      const winterClose = document.getElementById('closeWinter');
-
-      function openWinter(e) {
-        e?.preventDefault();
-        winterModal.classList.add('show');
-        winterModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeWinter() {
-        winterModal.classList.remove('show');
-        winterModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      if (winterOpen) winterOpen.addEventListener('click', openWinter);
-      if (winterClose) winterClose.addEventListener('click', closeWinter);
-      if (winterModal) winterModal.addEventListener('click', (e) => { if (e.target === winterModal) closeWinter(); });
-
-      // Spring modal
-      const springOpen = document.getElementById('openSpring');
-      const springModal = document.getElementById('springModal');
-      const springClose = document.getElementById('closeSpring');
-
-      function openSpring(e) {
-        e?.preventDefault();
-        springModal.classList.add('show');
-        springModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeSpring() {
-        springModal.classList.remove('show');
-        springModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      if (springOpen) springOpen.addEventListener('click', openSpring);
-      if (springClose) springClose.addEventListener('click', closeSpring);
-      if (springModal) springModal.addEventListener('click', (e) => { if (e.target === springModal) closeSpring(); });
-
-      // Summer modal
-      const summerOpen = document.getElementById('openSummer');
-      const summerModal = document.getElementById('summerModal');
-      const summerClose = document.getElementById('closeSummer');
-
-      function openSummer(e) {
-        e?.preventDefault();
-        summerModal.classList.add('show');
-        summerModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeSummer() {
-        summerModal.classList.remove('show');
-        summerModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      if (summerOpen) summerOpen.addEventListener('click', openSummer);
-      if (summerClose) summerClose.addEventListener('click', closeSummer);
-      if (summerModal) summerModal.addEventListener('click', (e) => { if (e.target === summerModal) closeSummer(); });
-
-      // Cooking modal
-      const cookOpen = document.getElementById('openCooking');
-      const cookModal = document.getElementById('cookingModal');
-      const cookClose = document.getElementById('closeCooking');
-
-      function openCook(e) {
-        e?.preventDefault();
-        cookModal.classList.add('show');
-        cookModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeCook() {
-        cookModal.classList.remove('show');
-        cookModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-      if (cookOpen) cookOpen.addEventListener('click', openCook);
-      if (cookClose) cookClose.addEventListener('click', closeCook);
-      if (cookModal) cookModal.addEventListener('click', (e) => { if (e.target === cookModal) closeCook(); });
-
-      // ESC closes whichever is open
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          if (storyModal && storyModal.classList.contains('show')) closeStory();
-          if (winterModal && winterModal.classList.contains('show')) closeWinter();
-          if (springModal && springModal.classList.contains('show')) closeSpring();
-          if (summerModal && summerModal.classList.contains('show')) closeSummer();
-          if (cookModal && cookModal.classList.contains('show')) closeCook();
-        }
-      });
-    })();
   </script>
 </body>
 </html>
