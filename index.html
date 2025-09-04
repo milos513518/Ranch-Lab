@@ -115,17 +115,13 @@
     /* Modals */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
     .modal-backdrop.show { display: flex; }
-    .modal-card { background: var(--modal-purple); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); width: 20cm; height: 20cm; overflow: auto; padding: 20px; position: relative; color: #1f2937; }
-    .modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink); }
-    .modal-close:hover { opacity: .8; }
-    .modal-card h2 { margin: 0 24px 8px 0; }
+    .modal-card { background: var(--modal-purple); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); width: 312px; height: 140px; overflow: hidden; padding: 0; position: relative; color: #1f2937; }
+    @media (max-width: 800px) {
+      .modal-card { width: 95vw; height: 80vh; }
+    }
 
     .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
     .btn-small { font-size: 14px; padding: 10px 14px; border-radius: 12px; }
-
-    @media (max-width: 800px) {
-      .modal-card { width: 95vw; height: 90vh; }
-    }
   </style>
 </head>
 
@@ -177,8 +173,9 @@
     <section id="menu">
       <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
         <h2 style="margin: 0;">Fall Menu: Ember &amp; Sea</h2>
-        <button class="btn btn-outline btn-small" style="font-size: 14px; padding: 8px 16px;">Winter: Dolomites &amp; Piedmont</button>
-        <button class="btn btn-outline btn-small" style="font-size: 14px; padding: 8px 16px;">Spring: Japan</button>
+        <button class="btn btn-outline btn-small" id="openWinter" style="font-size: 14px; padding: 8px 16px;">Winter: Dolomites &amp; Piedmont</button>
+        <button class="btn btn-outline btn-small" id="openSpring" style="font-size: 14px; padding: 8px 16px;">Spring: Japan</button>
+        <button class="btn btn-outline btn-small" id="openSummer" style="font-size: 14px; padding: 8px 16px;">Summer: Baja</button>
       </div>
       <div class="grid">
         <div class="menu-item">
@@ -339,8 +336,8 @@
 
   <!-- My Story Modal -->
   <div id="storyModal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
-      <button class="modal-close" aria-label="Close" id="closeStory">&times;</button>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="storyTitle" style="width: 20cm; height: 20cm; padding: 20px; overflow: auto;">
+      <button class="modal-close" aria-label="Close" id="closeStory" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
       <h2 id="storyTitle">My Story: From the Ocean to the Fire</h2>
       <p>I'm Milos, a longtime Bay Area resident, new Piedmont neighbor, first-time dad, and former sustainable fashion entrepreneur. Last August, I sold my third company: a zero-plastic apparel brand built on the principles of circularity. We created apparel and footwear designed to last a lifetime, yet capable of being composted back into soil that can grow anything green and alive.</p>
       <p>After years of building businesses, I've decided to follow a different path and one of my deepest personal passions: food and wellness. Cooking has always been a daily ritual in our home, especially since becoming a parent. Friends and family kept telling me, "You should offer this to others." So I am. And as with everything I've built, I'm doing it in a way that feels entirely my own.</p>
@@ -353,12 +350,40 @@
     </div>
   </div>
 
+  <!-- Winter Modal -->
+  <div id="winterModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="winterTitle" style="width: 500px; height: 300px; padding: 20px;">
+      <button class="modal-close" aria-label="Close" id="closeWinter" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+      <h2 id="winterTitle">Winter: Dolomites &amp; Piedmont</h2>
+      <p>Skiing and hiking initially drove me to this region. A memory that's inspiring the winter, alpine menu is Italian-Austrian chef, Norbert Niederkofler's Cook the Mountain philosophy.</p>
+      <p>Ingredients that I am thinking about are chestnuts, polenta, char, trout, truffles, wild boar, veal, fermented root veggies.</p>
+    </div>
+  </div>
+
+  <!-- Spring Modal -->
+  <div id="springModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="springTitle" style="width: 500px; height: 300px; padding: 20px;">
+      <button class="modal-close" aria-label="Close" id="closeSpring" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+      <h2 id="springTitle">Spring: Japan</h2>
+      <p>I'd love to spend time living in Japan. My first true introduction came through my friend's Tokyo restaurant, Udatsu, which earned the fastest Michelin star in Japan, and through skiing the legendary powder of Hokkaido.</p>
+      <p>For cherry blossom season, the menu will center on cherry wood smoke, yakitori, yellowtail, king crab, saba, and wagyu, miso and koji fermentation.</p>
+    </div>
+  </div>
+
+  <!-- Summer Modal (placeholder - needs content) -->
+  <div id="summerModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="summerTitle" style="width: 500px; height: 300px; padding: 20px;">
+      <button class="modal-close" aria-label="Close" id="closeSummer" style="position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink);">&times;</button>
+      <h2 id="summerTitle">Summer: Baja</h2>
+      <p>Content for Summer: Baja modal - please provide the text you'd like to display here.</p>
+    </div>
+  </div>
+
   <!-- My Cooking Modal (with Instagram feed) -->
   <div id="cookingModal" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookingTitle">
-      <button class="modal-close" aria-label="Close" id="closeCooking">&times;</button>
-      <h2 id="cookingTitle">My Cooking</h2>
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/myranchlab/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+      <button class="modal-close" aria-label="Close" id="closeCooking" style="position: absolute; top: 10px; right: 12px; border: 0; background: rgba(255,255,255,0.9); cursor: pointer; font-size: 22px; color: var(--ink); z-index: 1001; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">&times;</button>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/myranchlab/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:16px; box-shadow:none; margin:0; width:100%; height:100%; min-height:100%; padding:0; position: absolute; top: 0; left: 0;">
         <div style="padding:16px;">
           <a href="https://www.instagram.com/myranchlab/" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
             <div style="display: flex; flex-direction: row; align-items: center;">
@@ -421,7 +446,7 @@
                 <div class="order-item-name">${i.name}</div>
                 <div class="order-item-qty">Qty: ${i.qty}</div>
               </div>
-              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+              <div class="order-item-price">${(i.price * i.qty).toFixed(2)}</div>
             </div>
           `).join('');
         }
@@ -430,9 +455,9 @@
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
 
-        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+        if (subEl) subEl.textContent = `${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
       }
 
       function onQtyChange(input) {
@@ -571,7 +596,7 @@
       }
     }
 
-    // Modals (Story + Cooking)
+    // Modals (Story + Cooking + Winter + Spring + Summer)
     (function () {
       // Story modal
       const storyOpen = document.getElementById('openStory');
@@ -589,15 +614,74 @@
         storyModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
       }
-      storyOpen.addEventListener('click', openStory);
-      storyClose.addEventListener('click', closeStory);
-      storyModal.addEventListener('click', (e) => { if (e.target === storyModal) closeStory(); });
+      if (storyOpen) storyOpen.addEventListener('click', openStory);
+      if (storyClose) storyClose.addEventListener('click', closeStory);
+      if (storyModal) storyModal.addEventListener('click', (e) => { if (e.target === storyModal) closeStory(); });
 
-      // Cooking modal (with video)
+      // Winter modal
+      const winterOpen = document.getElementById('openWinter');
+      const winterModal = document.getElementById('winterModal');
+      const winterClose = document.getElementById('closeWinter');
+
+      function openWinter(e) {
+        e?.preventDefault();
+        winterModal.classList.add('show');
+        winterModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeWinter() {
+        winterModal.classList.remove('show');
+        winterModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      if (winterOpen) winterOpen.addEventListener('click', openWinter);
+      if (winterClose) winterClose.addEventListener('click', closeWinter);
+      if (winterModal) winterModal.addEventListener('click', (e) => { if (e.target === winterModal) closeWinter(); });
+
+      // Spring modal
+      const springOpen = document.getElementById('openSpring');
+      const springModal = document.getElementById('springModal');
+      const springClose = document.getElementById('closeSpring');
+
+      function openSpring(e) {
+        e?.preventDefault();
+        springModal.classList.add('show');
+        springModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeSpring() {
+        springModal.classList.remove('show');
+        springModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      if (springOpen) springOpen.addEventListener('click', openSpring);
+      if (springClose) springClose.addEventListener('click', closeSpring);
+      if (springModal) springModal.addEventListener('click', (e) => { if (e.target === springModal) closeSpring(); });
+
+      // Summer modal
+      const summerOpen = document.getElementById('openSummer');
+      const summerModal = document.getElementById('summerModal');
+      const summerClose = document.getElementById('closeSummer');
+
+      function openSummer(e) {
+        e?.preventDefault();
+        summerModal.classList.add('show');
+        summerModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeSummer() {
+        summerModal.classList.remove('show');
+        summerModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      if (summerOpen) summerOpen.addEventListener('click', openSummer);
+      if (summerClose) summerClose.addEventListener('click', closeSummer);
+      if (summerModal) summerModal.addEventListener('click', (e) => { if (e.target === summerModal) closeSummer(); });
+
+      // Cooking modal
       const cookOpen = document.getElementById('openCooking');
       const cookModal = document.getElementById('cookingModal');
       const cookClose = document.getElementById('closeCooking');
-      const cookVideo = document.getElementById('cookingVideo');
 
       function openCook(e) {
         e?.preventDefault();
@@ -606,20 +690,22 @@
         document.body.style.overflow = 'hidden';
       }
       function closeCook() {
-        if (cookVideo) { cookVideo.pause(); cookVideo.currentTime = 0; }
         cookModal.classList.remove('show');
         cookModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
       }
-      cookOpen.addEventListener('click', openCook);
-      cookClose.addEventListener('click', closeCook);
-      cookModal.addEventListener('click', (e) => { if (e.target === cookModal) closeCook(); });
+      if (cookOpen) cookOpen.addEventListener('click', openCook);
+      if (cookClose) cookClose.addEventListener('click', closeCook);
+      if (cookModal) cookModal.addEventListener('click', (e) => { if (e.target === cookModal) closeCook(); });
 
       // ESC closes whichever is open
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          if (storyModal.classList.contains('show')) closeStory();
-          if (cookModal.classList.contains('show')) closeCook();
+          if (storyModal && storyModal.classList.contains('show')) closeStory();
+          if (winterModal && winterModal.classList.contains('show')) closeWinter();
+          if (springModal && springModal.classList.contains('show')) closeSpring();
+          if (summerModal && summerModal.classList.contains('show')) closeSummer();
+          if (cookModal && cookModal.classList.contains('show')) closeCook();
         }
       });
     })();
