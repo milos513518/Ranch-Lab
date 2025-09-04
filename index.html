@@ -330,9 +330,8 @@
             </select>
           </div>
         </div>
-        <div class="delivery-cta-flex">
-          <button id="reserveUber" class="btn" style="display:none;">Reserve Uber</button>
-        </div>
+        <div class="delivery-cta-flex" id="uberBtnContainer">
+          </div>
       </div>
     </section>
 
@@ -440,7 +439,6 @@
       <script async src="//www.instagram.com/embed.js"></script>
     </div>
   </div>
-
   <script>
     // A single, global utility function for displaying messages
     function showMessage(message, type = 'warning') {
@@ -548,6 +546,11 @@
 
     // A module for handling fulfillment options (Pickup/Delivery/Uber)
     const Fulfillment = (function () {
+      const UBER_PICKUP_LATITUDE = 37.8244;
+      const UBER_PICKUP_LONGITUDE = -122.232;
+      const UBER_PICKUP_NICKNAME = 'Ranch Lab';
+      const UBER_PICKUP_ADDRESS = '964 Rose Avenue, Piedmont, CA, 94611';
+
       function selectChoice(type) {
         const pickupBtn = document.getElementById('pickupBtn');
         const deliveryBtn = document.getElementById('deliveryBtn');
@@ -569,8 +572,8 @@
       function updateTimes(type) {
         const dateEl = document.getElementById(type + 'Date');
         const timeEl = document.getElementById(type + 'Time');
-        const reserveBtn = document.getElementById('reserveUber');
-
+        const uberBtnContainer = document.getElementById('uberBtnContainer');
+        
         if (dateEl.value) {
           timeEl.disabled = false;
           timeEl.innerHTML = '<option value="">Select time...</option>';
@@ -594,8 +597,29 @@
           timeEl.disabled = true;
           timeEl.innerHTML = '<option value="">First select a date</option>';
         }
-        if (reserveBtn) {
-          reserveBtn.style.display = timeEl.value ? 'block' : 'none';
+
+        // Dynamically create or remove the Uber button/link
+        if (type === 'delivery' && uberBtnContainer) {
+          if (timeEl.value) {
+            uberBtnContainer.innerHTML = `<button class="btn" id="reserveUberBtn">Reserve Uber</button>`;
+            const reserveUberBtn = document.getElementById('reserveUberBtn');
+            reserveUberBtn.addEventListener('click', () => {
+              const uberAppLink = `uber://?action=setPickup&pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
+              const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
+
+              showMessage("Opening Uber...");
+
+              // Attempt to open the app link
+              window.location.href = uberAppLink;
+
+              // Fallback to the web link if the app doesn't open within a second
+              setTimeout(() => {
+                window.open(uberWebLink, '_blank');
+              }, 1000);
+            });
+          } else {
+            uberBtnContainer.innerHTML = '';
+          }
         }
       }
 
@@ -606,22 +630,8 @@
         document.getElementById('deliveryDate').addEventListener('change', () => updateTimes('delivery'));
 
         const deliveryTime = document.getElementById('deliveryTime');
-        const reserveUberBtn = document.getElementById('reserveUber');
-
         if (deliveryTime) {
-          deliveryTime.addEventListener('change', () => {
-            if (reserveUberBtn) reserveUberBtn.style.display = deliveryTime.value ? 'block' : 'none';
-          });
-        }
-
-        if (reserveUberBtn) {
-          reserveUberBtn.addEventListener('click', () => {
-            const date = document.getElementById('deliveryDate').value;
-            const time = document.getElementById('deliveryTime').value;
-            if (date && time) {
-              showMessage('Uber reservation feature coming soon! Please complete your order first.', 'warning');
-            }
-          });
+          deliveryTime.addEventListener('change', () => updateTimes('delivery'));
         }
       }
 
