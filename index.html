@@ -571,6 +571,8 @@
     function updateTimes(type) {
       const dateEl = document.getElementById(type + 'Date');
       const timeEl = document.getElementById(type + 'Time');
+      const reserveBtn = document.getElementById('reserveUber');
+      
       if (dateEl.value) {
         timeEl.disabled = false;
         timeEl.innerHTML = '<option value="">Select time...</option>';
@@ -591,11 +593,37 @@
             timeEl.appendChild(option);
           }
         }
+        
+        // Add event listener to show Reserve Uber button when time is selected
+        if (type === 'delivery') {
+          timeEl.addEventListener('change', function() {
+            if (this.value && reserveBtn) {
+              reserveBtn.style.display = 'block';
+            }
+          });
+        }
       } else {
         timeEl.disabled = true;
         timeEl.innerHTML = '<option value="">First select a date</option>';
+        if (reserveBtn && type === 'delivery') {
+          reserveBtn.style.display = 'none';
+        }
       }
     }
+
+    // Reserve Uber functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const reserveBtn = document.getElementById('reserveUber');
+      if (reserveBtn) {
+        reserveBtn.addEventListener('click', () => {
+          const date = document.getElementById('deliveryDate').value;
+          const time = document.getElementById('deliveryTime').value;
+          if (date && time) {
+            showMessage('Uber reservation feature coming soon! Please complete your order first.', 'warning');
+          }
+        });
+      }
+    });
 
     // Modals (Story + Cooking + Winter + Spring + Summer)
     (function () {
