@@ -123,7 +123,7 @@
     /* Modals */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
     .modal-backdrop.show { display: flex; }
-    .modal-card { background: var(--modal-purple); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); width: 384px; height: 456px; /* Increased height */ overflow: hidden; padding: 0; position: relative; color: #1f2937; }
+    .modal-card { background: var(--modal-purple); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); width: 384px; height: 550px; /* Increased height for 3x3 grid */ overflow: hidden; padding: 0; position: relative; color: #1f2937; }
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 80vh; }
     }
@@ -175,6 +175,14 @@
     }
     .line-1 { width: 100px; }
     .line-2 { width: 60px; }
+    
+    /* New Instagram grid for 3x3 layout */
+    .instagram-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 16px;
+    }
   </style>
 </head>
 
@@ -429,7 +437,7 @@
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookingTitle">
       <button class="modal-close btn-cooking" aria-label="Close" id="closeCooking">&times;</button>
       <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/myranchlab/" data-instgrm-version="14">
-        <div class="instagram-placeholder">
+        <div class="instagram-placeholder instagram-grid">
           <a href="https://www.instagram.com/myranchlab/" target="_blank">
             <div class="instagram-header">
               <div class="profile-pic-placeholder"></div>
@@ -445,7 +453,6 @@
     </div>
   </div>
   <script>
-    // A single, global utility function for displaying messages
     function showMessage(message, type = 'warning') {
       const msgBox = document.getElementById('message-box');
       if (!msgBox) return;
@@ -455,10 +462,8 @@
       setTimeout(() => { msgBox.classList.remove('show'); }, 3000);
     }
 
-    // A module for handling the shopping cart and order summary
     const Cart = (function () {
       const TAX_RATE = 0.1025;
-
       function readCart() {
         return Array.from(document.querySelectorAll('.menu-item'))
           .map(card => {
@@ -470,16 +475,13 @@
           })
           .filter(i => i.qty > 0);
       }
-
       function renderSummary() {
         const cart = readCart();
         const summaryEl = document.getElementById('orderSummary');
         const subEl = document.getElementById('subtotal');
         const taxEl = document.getElementById('tax');
         const totalEl = document.getElementById('total');
-
         if (!summaryEl) return;
-
         if (cart.length === 0) {
           summaryEl.innerHTML = '<p class="muted">No items selected</p>';
         } else {
@@ -493,16 +495,13 @@
             </div>
           `).join('');
         }
-
         const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
-
         if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
         if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
         if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
       }
-
       function onQtyChange(input) {
         const qty = parseInt(input.value || '0', 10) || 0;
         const price = parseFloat(input.dataset.price || '0') || 0;
@@ -511,12 +510,10 @@
         renderSummary();
         saveCart();
       }
-
       function saveCart() {
         const cart = readCart();
-        try { localStorage.setItem('ranchlab_cart', JSON.stringify(cart)); } catch (e) { /* Ignore localStorage errors */ }
+        try { localStorage.setItem('ranchlab_cart', JSON.stringify(cart)); } catch (e) {}
       }
-
       function restoreCart() {
         try {
           const saved = localStorage.getItem('ranchlab_cart');
@@ -526,9 +523,8 @@
             const input = document.querySelector(`.qty[data-name="${i.name}"]`);
             if (input) input.value = i.qty;
           });
-        } catch (e) { /* Ignore localStorage errors */ }
+        } catch (e) {}
       }
-      
       function setupEventListeners() {
         document.querySelectorAll('.qty').forEach(input => {
           onQtyChange(input);
@@ -536,26 +532,22 @@
           input.addEventListener('change', () => onQtyChange(input));
         });
       }
-
       function init() {
         restoreCart();
         setupEventListeners();
         renderSummary();
       }
-
       return {
         init: init,
         readCart: readCart
       };
     })();
 
-    // A module for handling fulfillment options (Pickup/Delivery/Uber)
     const Fulfillment = (function () {
       const UBER_PICKUP_LATITUDE = 37.8244;
       const UBER_PICKUP_LONGITUDE = -122.232;
       const UBER_PICKUP_NICKNAME = 'Ranch Lab';
       const UBER_PICKUP_ADDRESS = '964 Rose Avenue, Piedmont, CA, 94611';
-
       function selectChoice(type) {
         const pickupBtn = document.getElementById('pickupBtn');
         const deliveryBtn = document.getElementById('deliveryBtn');
@@ -573,12 +565,10 @@
           deliverySchedule.style.display = 'block';
         }
       }
-
       function updateTimes(type) {
         const dateEl = document.getElementById(type + 'Date');
         const timeEl = document.getElementById(type + 'Time');
         const uberBtnContainer = document.getElementById('uberBtnContainer');
-        
         if (dateEl.value) {
           timeEl.disabled = false;
           timeEl.innerHTML = '<option value="">Select time...</option>';
@@ -602,8 +592,6 @@
           timeEl.disabled = true;
           timeEl.innerHTML = '<option value="">First select a date</option>';
         }
-
-        // Dynamically create or remove the Uber button
         if (type === 'delivery' && uberBtnContainer) {
           if (timeEl.value) {
             uberBtnContainer.innerHTML = `<button class="btn" id="reserveUberBtn">Reserve Uber</button>`;
@@ -611,13 +599,8 @@
             reserveUberBtn.addEventListener('click', () => {
               const uberAppLink = `uber://?action=setPickup&pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
               const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
-
               showMessage("Opening Uber...");
-
-              // Attempt to open the app link
               window.location.href = uberAppLink;
-
-              // Fallback to the web link if the app doesn't open within a second
               setTimeout(() => {
                 window.open(uberWebLink, '_blank');
               }, 1000);
@@ -627,59 +610,48 @@
           }
         }
       }
-
       function setupEventListeners() {
         document.getElementById('pickupBtn').addEventListener('click', () => selectChoice('pickup'));
         document.getElementById('deliveryBtn').addEventListener('click', () => selectChoice('delivery'));
         document.getElementById('pickupDate').addEventListener('change', () => updateTimes('pickup'));
         document.getElementById('deliveryDate').addEventListener('change', () => updateTimes('delivery'));
-
         const deliveryTime = document.getElementById('deliveryTime');
         if (deliveryTime) {
           deliveryTime.addEventListener('change', () => updateTimes('delivery'));
         }
       }
-
       function init() {
         setupEventListeners();
       }
-
       return {
         init: init
       };
     })();
 
-    // A module for handling modals
     const Modals = (function () {
       function setupModal(triggerId, modalId, closeId) {
         const openBtn = document.getElementById(triggerId);
         const modal = document.getElementById(modalId);
         const closeBtn = document.getElementById(closeId);
-
         if (!openBtn || !modal || !closeBtn) return;
-
         function openModal(e) {
           e?.preventDefault();
           modal.classList.add('show');
           modal.setAttribute('aria-hidden', 'false');
           document.body.style.overflow = 'hidden';
         }
-
         function closeModal() {
           modal.classList.remove('show');
           modal.setAttribute('aria-hidden', 'true');
           document.body.style.overflow = '';
         }
-
         openBtn.addEventListener('click', openModal);
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', (e) => {
           if (e.target === modal) closeModal();
         });
-
         return closeModal;
       }
-
       function init() {
         const closers = [
           setupModal('openStory', 'storyModal', 'closeStory'),
@@ -688,20 +660,17 @@
           setupModal('openSummer', 'summerModal', 'closeSummer'),
           setupModal('openCooking', 'cookingModal', 'closeCooking')
         ].filter(Boolean);
-
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
             closers.forEach(closeFn => closeFn());
           }
         });
       }
-
       return {
         init: init
       };
     })();
 
-    // A module for handling the checkout process with dependency injection
     const Checkout = (function (cartReader, messageSender) {
       async function createCheckoutSession(payload) {
         const res = await fetch('/api/checkout', {
@@ -715,16 +684,13 @@
         }
         return res.json();
       }
-
       async function handleSubmit(event) {
-        event.preventDefault(); // Prevent default form submission
-
+        event.preventDefault();
         const cartItems = cartReader();
         if (!cartItems.length) {
           messageSender('Please add at least one item.');
           return;
         }
-
         const customer = {
           name: document.getElementById('customerName').value.trim(),
           email: document.getElementById('customerEmail').value.trim(),
@@ -734,22 +700,17 @@
           messageSender('Please enter name, email, and phone.');
           return;
         }
-
         const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
         const slot = orderType === 'pickup'
           ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
           : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
-
         try {
           messageSender('Redirecting to Stripe...', 'success');
-          // Update button text and disable to prevent double clicks
           const submitBtn = document.getElementById('submit-order');
           submitBtn.textContent = 'Processing...';
           submitBtn.disabled = true;
-
           const response = await createCheckoutSession({ cartItems, orderType, slot, customer });
-          window.location.href = response.url; // Redirect to Stripe Checkout
-
+          window.location.href = response.url;
         } catch (e) {
           messageSender('Checkout failed: ' + e.message, 'warning');
           const submitBtn = document.getElementById('submit-order');
@@ -757,17 +718,14 @@
           submitBtn.disabled = false;
         }
       }
-
       function init() {
         document.getElementById('submit-order').addEventListener('click', handleSubmit);
       }
-
       return {
         init: init
       };
-    })(Cart.readCart, showMessage); // Inject dependencies here
+    })(Cart.readCart, showMessage);
 
-    // Initialize all modules on page load
     document.addEventListener('DOMContentLoaded', () => {
       Cart.init();
       Fulfillment.init();
