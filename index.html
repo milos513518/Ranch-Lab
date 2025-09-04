@@ -165,11 +165,12 @@
       right: 12px;
       padding: 0;
     }
-    /* Specific styles for the cooking modal to match the exact embed size */
+    
+    /* Specific styles for the cooking modal - UPDATED FOR 6 IMAGES */
     #cookingModal .modal-card {
       background: #ffffff;
-      width: 384px;
-      height: 408px;
+      width: 320px; /* Reduced width for 6 images */
+      height: 280px; /* Reduced height for 6 images */
       max-height: 90vh;
       padding: 0;
       overflow: hidden;
@@ -177,14 +178,14 @@
     }
     #cookingModal blockquote.instagram-media {
         margin: 0 !important;
-        min-height: 100%;
+        height: 100%;
         box-sizing: border-box;
     }
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 80vh; }
       #cookingModal .modal-card {
         width: 95vw;
-        height: 80vh;
+        height: 60vh; /* Reduced mobile height */
         max-height: 95vh;
       }
     }
@@ -206,20 +207,21 @@
       border-radius: 16px;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 10px; /* Reduced padding */
     }
     .instagram-header {
       display: flex;
       flex-direction: row;
       align-items: center;
+      margin-bottom: 8px; /* Reduced margin */
     }
     .profile-pic-placeholder {
       background-color: #e0e0e0;
       border-radius: 50%;
       flex-grow: 0;
-      height: 40px;
-      margin-right: 14px;
-      width: 40px;
+      height: 30px; /* Reduced size */
+      margin-right: 10px; /* Reduced margin */
+      width: 30px; /* Reduced size */
     }
     .text-placeholder {
       display: flex;
@@ -231,20 +233,22 @@
       background-color: #e0e0e0;
       border-radius: 4px;
       flex-grow: 0;
-      height: 14px;
-      margin-bottom: 6px;
+      height: 10px; /* Reduced height */
+      margin-bottom: 4px; /* Reduced margin */
     }
-    .line-1 { width: 100px; }
-    .line-2 { width: 60px; }
+    .line-1 { width: 80px; } /* Reduced width */
+    .line-2 { width: 50px; } /* Reduced width */
     
-    /* New Instagram grid for 3x3 layout */
+    /* Updated Instagram grid for 2x3 layout (6 images) */
     .instagram-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 16px;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns */
+      grid-template-rows: repeat(2, 1fr); /* 2 rows */
+      gap: 4px; /* Reduced gap */
+      padding: 8px; /* Reduced padding */
       max-width: 100%;
       box-sizing: border-box;
+      flex-grow: 1;
     }
 
     /* Style for individual image placeholders within the grid */
@@ -252,7 +256,8 @@
       width: 100%;
       padding-bottom: 100%; /* Creates a square aspect ratio */
       background-color: #e0e0e0; /* Grey background for visual placeholder */
-      border-radius: 4px;
+      border-radius: 3px; /* Smaller border radius */
+      position: relative;
     }
   </style>
 </head>
@@ -528,12 +533,6 @@
             <div class="image-placeholder"></div>
             <div class="image-placeholder"></div>
             <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
-            <div class="image-placeholder"></div>
           </div>
         </div>
       </blockquote>
@@ -579,16 +578,16 @@
                 <div class="order-item-name">${i.name}</div>
                 <div class="order-item-qty">Qty: ${i.qty}</div>
               </div>
-              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+              <div class="order-item-price">${(i.price * i.qty).toFixed(2)}</div>
             </div>
           `).join('');
         }
         const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
-        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+        if (subEl) subEl.textContent = `${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
       }
       function onQtyChange(input) {
         const qty = parseInt(input.value || '0', 10) || 0;
@@ -667,7 +666,7 @@
               const endMin = min + 15;
               const endHour = endMin >= 60 ? hour + 1 : hour;
               const endSuffix = endHour >= 12 ? 'pm' : 'am';
-              const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
+              const endDisplayHour = endHour > 12 ? endHour - 2 : endHour;
               const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
               const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
               const option = document.createElement('option');
