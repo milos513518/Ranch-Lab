@@ -144,8 +144,8 @@
       border-radius: 16px; 
       box-shadow: var(--shadow); 
       width: 384px; 
-      height: 480px; 
-      overflow: hidden; 
+      max-height: 90vh; 
+      overflow-y: auto; 
       padding: 0; 
       position: relative; 
       color: #1f2937; 
@@ -165,8 +165,28 @@
       right: 12px;
       padding: 0;
     }
+    /* Specific styles for the cooking modal to make the Instagram embed fill it */
+    #cookingModal .modal-card {
+      background: #ffffff;
+      width: 480px;
+      height: 600px;
+      max-height: 90vh;
+      padding: 0;
+      overflow-y: auto;
+      display: block;
+    }
+    #cookingModal blockquote.instagram-media {
+        margin: 0 !important;
+        min-height: 100%;
+        box-sizing: border-box;
+    }
     @media (max-width: 800px) {
       .modal-card { width: 95vw; height: 80vh; }
+      #cookingModal .modal-card {
+        width: 95vw;
+        height: 80vh;
+        max-height: 95vh;
+      }
     }
     .modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: transparent; cursor: pointer; font-size: 22px; color: var(--ink); }
     .modal-close.btn-cooking { background: rgba(255, 255, 255, 0.9); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; z-index: 1001; }
@@ -250,7 +270,7 @@
         <h1>Fire-inspired cooking crafted from my travels</h1>
         <div class="cta">
           <a class="btn" id="openStory" href="#">My Story</a>
-          <a class="btn btn-outline" id="openCooking" href="#">My Cooking</a>
+          <a class="btn-outline" id="openCooking" href="#">My Cooking</a>
         </div>
       </div>
     </section>
