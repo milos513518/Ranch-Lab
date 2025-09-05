@@ -535,6 +535,36 @@
   </div>
 
   <script>
+    // Global functions for buttons
+    window.copyPickupAddress = function() {
+      const address = "964 Rose Ave, Piedmont, CA 94611";
+      navigator.clipboard.writeText(address).then(function() {
+        showMessage("Address copied to clipboard!", 'success');
+      }).catch(function() {
+        const textArea = document.createElement("textarea");
+        textArea.value = address;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showMessage("Address copied to clipboard!", 'success');
+      });
+    };
+
+    window.openUberApp = function() {
+      const address = "964 Rose Ave, Piedmont, CA 94611";
+      const encodedAddress = encodeURIComponent(address);
+      
+      const uberApp = `uber://?action=setPickup&pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
+      const uberWeb = `https://m.uber.com/looking?pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
+      
+      showMessage("Opening Uber...", 'success');
+      window.location.href = uberApp;
+      setTimeout(() => {
+        window.open(uberWeb, '_blank');
+      }, 2000);
+    };
+
     function showMessage(message, type = 'warning') {
       const msgBox = document.getElementById('message-box');
       if (!msgBox) return;
@@ -638,12 +668,8 @@
       };
     })();
 
-    // Delivery and Pickup functionality
+    // Delivery system functionality
     const DeliverySystem = (function () {
-      const UBER_PICKUP_LATITUDE = 37.8244;
-      const UBER_PICKUP_LONGITUDE = -122.232;
-      const UBER_PICKUP_NICKNAME = 'Ranch Lab';
-      const UBER_PICKUP_ADDRESS = '964 Rose Avenue, Piedmont, CA, 94611';
       
       function selectFulfillmentType(type) {
         const pickupBtn = document.getElementById('pickupBtn');
@@ -651,7 +677,6 @@
         const pickupSchedule = document.getElementById('pickupSchedule');
         const deliverySchedule = document.getElementById('deliverySchedule');
         
-        // Reset all
         pickupBtn.classList.remove('selected');
         deliveryBtn.classList.remove('selected');
         pickupSchedule.style.display = 'none';
@@ -686,84 +711,34 @@
         return options.join('');
       }
       
-      function showUberButton() {
+      function showUberSection() {
         const deliveryDate = document.getElementById('deliveryDate');
         const deliveryTime = document.getElementById('deliveryTime');
         const uberContainer = document.getElementById('uberBtnContainer');
         
-        console.log('Checking Uber button conditions...');
-        console.log('Date:', deliveryDate?.value);
-        console.log('Time:', deliveryTime?.value);
-        console.log('Container exists:', !!uberContainer);
-        
         if (!uberContainer) return;
         
         if (deliveryDate?.value && deliveryTime?.value) {
-          console.log('Showing Uber button');
           uberContainer.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap;">
-              <div style="text-align: center;">
-                <div style="font-weight: 600; margin-bottom: 4px;">Pick Up Address</div>
-                <div style="color: var(--ink2); font-size: 14px;">964 Rose Ave, Piedmont, CA 94611</div>
+            <div style="text-align: center;">
+              <div style="font-weight: 600; margin-bottom: 8px;">Pick Up Address</div>
+              <div style="color: #4b5563; margin-bottom: 16px;">964 Rose Ave, Piedmont, CA 94611</div>
+              <button onclick="window.copyPickupAddress()" style="background: white; color: #6d28d9; border: 2px solid #6d28d9; padding: 8px 16px; margin-right: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">Copy Pick Up Address</button>
+              <button onclick="window.openUberApp()" style="background: #6d28d9; color: white; border: none; padding: 12px 20px; border-radius: 16px; font-weight: 700; cursor: pointer;">Schedule Uber Courier</button>
+              <div style="color: #4b5563; font-size: 13px; margin-top: 16px;">
+                After clicking "Schedule Uber Courier", you'll need to reserve your ride by clicking the "Pick Up Now" button in the Uber app. Use the "Copy Pick Up Address" button above to easily paste the address into Uber's pickup field.
               </div>
-              <button class="btn" onclick="openUberApp()">Schedule Uber</button>
             </div>
           `;
         } else {
-          console.log('Hiding Uber button');
           uberContainer.innerHTML = '';
         }
       }
       
-      // Make this function global so the onclick can access it
-      window.openUberApp = function() {
-        // Try multiple Uber URL formats for better compatibility
-        const address = "964 Rose Ave, Piedmont, CA 94611";
-        const encodedAddress = encodeURIComponent(address);
-        
-        // Method 1: Modern Uber deep link
-        const uberApp1 = `uber://?action=setPickup&pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
-        
-        // Method 2: Alternative format
-        const uberApp2 = `uber://ride?pickup[formatted_address]=${encodedAddress}`;
-        
-        // Method 3: Web fallback with pre-filled pickup
-        const uberWeb = `https://m.uber.com/looking?pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
-        
-        showMessage("Opening Uber...", 'success');
-        
-        // Try the primary app link
-        window.location.href = uberApp1;
-        
-        // Fallback to web version if app doesn't open
-        setTimeout(() => {
-          window.open(uberWeb, '_blank');
-        }, 2000);
-      };
-      
-      // Copy pickup address function
-      window.copyPickupAddress = function() {
-        const address = "964 Rose Ave, Piedmont, CA 94611";
-        navigator.clipboard.writeText(address).then(function() {
-          showMessage("Address copied to clipboard!", 'success');
-        }).catch(function() {
-          // Fallback for older browsers
-          const textArea = document.createElement("textarea");
-          textArea.value = address;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          showMessage("Address copied to clipboard!", 'success');
-        });
-      };
-      
       function init() {
-        // Pickup/Delivery buttons
         document.getElementById('pickupBtn').addEventListener('click', () => selectFulfillmentType('pickup'));
         document.getElementById('deliveryBtn').addEventListener('click', () => selectFulfillmentType('delivery'));
         
-        // Pickup date change
         document.getElementById('pickupDate').addEventListener('change', function() {
           const timeSelect = document.getElementById('pickupTime');
           if (this.value) {
@@ -775,7 +750,6 @@
           }
         });
         
-        // Delivery date change
         document.getElementById('deliveryDate').addEventListener('change', function() {
           const timeSelect = document.getElementById('deliveryTime');
           if (this.value) {
@@ -785,13 +759,11 @@
             timeSelect.disabled = true;
             timeSelect.innerHTML = '<option value="">First select a date</option>';
           }
-          showUberButton();
+          showUberSection();
         });
         
-        // Delivery time change
         document.getElementById('deliveryTime').addEventListener('change', function() {
-          console.log('Delivery time changed to:', this.value);
-          showUberButton();
+          showUberSection();
         });
       }
       
