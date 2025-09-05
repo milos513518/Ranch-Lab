@@ -700,7 +700,15 @@
         
         if (deliveryDate?.value && deliveryTime?.value) {
           console.log('Showing Uber button');
-          uberContainer.innerHTML = '<button class="btn" onclick="openUberApp()">Schedule Uber</button>';
+          uberContainer.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap;">
+              <div style="text-align: center;">
+                <div style="font-weight: 600; margin-bottom: 4px;">Pick Up Address</div>
+                <div style="color: var(--ink2); font-size: 14px;">964 Rose Ave, Piedmont, CA 94611</div>
+              </div>
+              <button class="btn" onclick="openUberApp()">Schedule Uber</button>
+            </div>
+          `;
         } else {
           console.log('Hiding Uber button');
           uberContainer.innerHTML = '';
@@ -731,6 +739,23 @@
         setTimeout(() => {
           window.open(uberWeb, '_blank');
         }, 2000);
+      };
+      
+      // Copy pickup address function
+      window.copyPickupAddress = function() {
+        const address = "964 Rose Ave, Piedmont, CA 94611";
+        navigator.clipboard.writeText(address).then(function() {
+          showMessage("Address copied to clipboard!", 'success');
+        }).catch(function() {
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = address;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          showMessage("Address copied to clipboard!", 'success');
+        });
       };
       
       function init() {
