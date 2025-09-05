@@ -449,6 +449,8 @@
             </select>
           </div>
         </div>
+        <div class="delivery-cta-flex" id="pickupAddressContainer">
+        </div>
       </div>
 
       <div id="deliverySchedule" style="display:none" class="schedule-container">
@@ -777,6 +779,26 @@
         return options.join('');
       }
       
+      function showPickupAddress() {
+        const pickupDate = document.getElementById('pickupDate');
+        const pickupTime = document.getElementById('pickupTime');
+        const pickupContainer = document.getElementById('pickupAddressContainer');
+        
+        if (!pickupContainer) return;
+        
+        if (pickupDate?.value && pickupTime?.value) {
+          pickupContainer.innerHTML = `
+            <div style="text-align: center;">
+              <div style="font-weight: 600; margin-bottom: 8px;">Pick Up Address</div>
+              <div style="color: #4b5563; margin-bottom: 16px;">964 Rose Ave, Piedmont, CA 94611</div>
+              <button onclick="window.copyPickupAddress()" style="background: white; color: #6d28d9; border: 2px solid #6d28d9; padding: 8px 16px; border-radius: 12px; font-weight: 700; cursor: pointer;">Copy Pick Up Address</button>
+            </div>
+          `;
+        } else {
+          pickupContainer.innerHTML = '';
+        }
+      }
+      
       function showUberSection() {
         const deliveryDate = document.getElementById('deliveryDate');
         const deliveryTime = document.getElementById('deliveryTime');
@@ -814,6 +836,11 @@
             timeSelect.disabled = true;
             timeSelect.innerHTML = '<option value="">First select a date</option>';
           }
+          showPickupAddress();
+        });
+        
+        document.getElementById('pickupTime').addEventListener('change', function() {
+          showPickupAddress();
         });
         
         document.getElementById('deliveryDate').addEventListener('change', function() {
