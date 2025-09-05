@@ -16,7 +16,7 @@
       --success: #10b981;
       --warning: #f59e0b;
       --shadow: 0 10px 25px rgba(17, 24, 39, 0.07);
-      --modal-purple: #f3e8ff; /* purple modal background */
+      --modal-purple: #f3e8ff;
     }
 
     * { box-sizing: border-box; }
@@ -49,7 +49,6 @@
     h3 { font-size: 18px; margin: 0 0 8px; font-weight: 600; }
     p { color: var(--ink2); margin: 8px 0; }
 
-    /* How it works */
     .how-wrap {
       display: grid;
       grid-template-columns: 1fr;
@@ -130,11 +129,9 @@
     footer .note { margin-top: 12px; }
     .hero { display: flex; flex-direction: column; gap: 12px; margin: 8px 0 8px; }
 
-    /* Message Box */
     .message-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--warning); color: #fff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, .1); z-index: 100; transition: opacity .3s; opacity: 0; }
     .message-box.show { opacity: 1; }
 
-    /* Modals */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
     .modal-backdrop.show { display: flex; }
     .modal-card { 
@@ -165,7 +162,6 @@
       padding: 0;
     }
     
-    /* Specific styles for the cooking modal to match the exact embed size */
     #cookingModal .modal-card {
       background: #ffffff;
       width: 384px;
@@ -196,7 +192,6 @@
     .btn-small { font-size: 14px; padding: 8px 16px; border-radius: 12px; }
     .menu-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
 
-    /* Instagram Placeholder styles */
     .instagram-placeholder {
       display: flex;
       flex-direction: column;
@@ -237,7 +232,6 @@
     .line-1 { width: 100px; }
     .line-2 { width: 60px; }
     
-    /* New Instagram grid for 3x3 layout */
     .instagram-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -247,11 +241,10 @@
       box-sizing: border-box;
     }
 
-    /* Style for individual image placeholders within the grid */
     .instagram-grid .image-placeholder {
       width: 100%;
-      padding-bottom: 100%; /* Creates a square aspect ratio */
-      background-color: #e0e0e0; /* Grey background for visual placeholder */
+      padding-bottom: 100%;
+      background-color: #e0e0e0;
       border-radius: 4px;
     }
   </style>
@@ -415,7 +408,7 @@
           </div>
         </div>
         <div class="delivery-cta-flex" id="uberBtnContainer">
-          </div>
+        </div>
       </div>
     </section>
 
@@ -540,6 +533,7 @@
       <script async src="//www.instagram.com/embed.js"></script>
     </div>
   </div>
+
   <script>
     function showMessage(message, type = 'warning') {
       const msgBox = document.getElementById('message-box');
@@ -550,8 +544,10 @@
       setTimeout(() => { msgBox.classList.remove('show'); }, 3000);
     }
 
+    // Cart functionality
     const Cart = (function () {
       const TAX_RATE = 0.1025;
+      
       function readCart() {
         return Array.from(document.querySelectorAll('.menu-item'))
           .map(card => {
@@ -563,13 +559,16 @@
           })
           .filter(i => i.qty > 0);
       }
+      
       function renderSummary() {
         const cart = readCart();
         const summaryEl = document.getElementById('orderSummary');
         const subEl = document.getElementById('subtotal');
         const taxEl = document.getElementById('tax');
         const totalEl = document.getElementById('total');
+        
         if (!summaryEl) return;
+        
         if (cart.length === 0) {
           summaryEl.innerHTML = '<p class="muted">No items selected</p>';
         } else {
@@ -579,17 +578,20 @@
                 <div class="order-item-name">${i.name}</div>
                 <div class="order-item-qty">Qty: ${i.qty}</div>
               </div>
-              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+              <div class="order-item-price">${(i.price * i.qty).toFixed(2)}</div>
             </div>
           `).join('');
         }
+        
         const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
-        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+        
+        if (subEl) subEl.textContent = `${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
       }
+      
       function onQtyChange(input) {
         const qty = parseInt(input.value || '0', 10) || 0;
         const price = parseFloat(input.dataset.price || '0') || 0;
@@ -598,10 +600,12 @@
         renderSummary();
         saveCart();
       }
+      
       function saveCart() {
         const cart = readCart();
         try { localStorage.setItem('ranchlab_cart', JSON.stringify(cart)); } catch (e) {}
       }
+      
       function restoreCart() {
         try {
           const saved = localStorage.getItem('ranchlab_cart');
@@ -613,6 +617,7 @@
           });
         } catch (e) {}
       }
+      
       function setupEventListeners() {
         document.querySelectorAll('.qty').forEach(input => {
           onQtyChange(input);
@@ -620,31 +625,38 @@
           input.addEventListener('change', () => onQtyChange(input));
         });
       }
+      
       function init() {
         restoreCart();
         setupEventListeners();
         renderSummary();
       }
+      
       return {
         init: init,
         readCart: readCart
       };
     })();
 
-    const Fulfillment = (function () {
+    // Delivery and Pickup functionality
+    const DeliverySystem = (function () {
       const UBER_PICKUP_LATITUDE = 37.8244;
       const UBER_PICKUP_LONGITUDE = -122.232;
       const UBER_PICKUP_NICKNAME = 'Ranch Lab';
       const UBER_PICKUP_ADDRESS = '964 Rose Avenue, Piedmont, CA, 94611';
-      function selectChoice(type) {
+      
+      function selectFulfillmentType(type) {
         const pickupBtn = document.getElementById('pickupBtn');
         const deliveryBtn = document.getElementById('deliveryBtn');
         const pickupSchedule = document.getElementById('pickupSchedule');
         const deliverySchedule = document.getElementById('deliverySchedule');
+        
+        // Reset all
         pickupBtn.classList.remove('selected');
         deliveryBtn.classList.remove('selected');
         pickupSchedule.style.display = 'none';
         deliverySchedule.style.display = 'none';
+        
         if (type === 'pickup') {
           pickupBtn.classList.add('selected');
           pickupSchedule.style.display = 'block';
@@ -653,106 +665,132 @@
           deliverySchedule.style.display = 'block';
         }
       }
-      function updateTimes(type) {
-        const dateEl = document.getElementById(type + 'Date');
-        const timeEl = document.getElementById(type + 'Time');
-        const uberBtnContainer = document.getElementById('uberBtnContainer');
-        const scheduleInfo = document.getElementById('scheduleInfo');
-        const scheduledDateTime = document.getElementById('scheduledDateTime');
-        if (dateEl.value) {
-          timeEl.disabled = false;
-          timeEl.innerHTML = '<option value="">Select time...</option>';
-          for (let hour = 12; hour < 14; hour++) {
-            for (let min = 0; min < 60; min += 15) {
-              const startHour = hour > 12 ? hour - 12 : hour;
-              const startSuffix = hour >= 12 ? 'pm' : 'am';
-              const endMin = min + 15;
-              const endHour = endMin >= 60 ? hour + 1 : hour;
-              const endSuffix = endHour >= 12 ? 'pm' : 'am';
-              const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
-              const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
-              const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
-              const option = document.createElement('option');
-              option.value = start;
-              option.textContent = start + ' - ' + end;
-              timeEl.appendChild(option);
-            }
-          }
-        } else {
-          timeEl.disabled = true;
-          timeEl.innerHTML = '<option value="">First select a date</option>';
-        }
-        if (type === 'delivery') {
-          if (scheduleInfo) scheduleInfo.style.display = 'none';
-          if (uberBtnContainer) uberBtnContainer.innerHTML = '';
-          if (dateEl.value && timeEl.value) {
-            const selectedDate = new Date(dateEl.value);
-            const formattedDate = selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            const scheduledText = `${formattedDate} at ${timeEl.value}`;
-            if (scheduleInfo) {
-              scheduleInfo.style.display = 'block';
-              if (scheduledDateTime) scheduledDateTime.textContent = scheduledText;
-            }
-            if (uberBtnContainer) {
-              uberBtnContainer.innerHTML = `<button class="btn" id="reserveUberBtn">Reserve Uber</button>`;
-              const reserveUberBtn = document.getElementById('reserveUberBtn');
-              if (reserveUberBtn) {
-                reserveUberBtn.addEventListener('click', () => {
-                  const uberAppLink = `uber://?action=setPickup&pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
-                  const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
-                  showMessage("Opening Uber...", 'success');
-                  window.location.href = uberAppLink;
-                  setTimeout(() => {
-                    window.open(uberWebLink, '_blank');
-                  }, 1000);
-                });
-              }
-            }
+      
+      function generateTimeOptions() {
+        const options = ['<option value="">Select time...</option>'];
+        for (let hour = 12; hour < 14; hour++) {
+          for (let min = 0; min < 60; min += 15) {
+            const startHour = hour > 12 ? hour - 12 : hour;
+            const startSuffix = hour >= 12 ? 'pm' : 'am';
+            const endMin = min + 15;
+            const endHour = endMin >= 60 ? hour + 1 : hour;
+            const endSuffix = endHour >= 12 ? 'pm' : 'am';
+            const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
+            
+            const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
+            const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
+            
+            options.push(`<option value="${start}">${start} - ${end}</option>`);
           }
         }
+        return options.join('');
       }
-      function setupEventListeners() {
-        document.getElementById('pickupBtn').addEventListener('click', () => selectChoice('pickup'));
-        document.getElementById('deliveryBtn').addEventListener('click', () => selectChoice('delivery'));
-        document.getElementById('pickupDate').addEventListener('change', () => updateTimes('pickup'));
-        document.getElementById('deliveryDate').addEventListener('change', () => updateTimes('delivery'));
+      
+      function showUberButton() {
+        const deliveryDate = document.getElementById('deliveryDate');
         const deliveryTime = document.getElementById('deliveryTime');
-        if (deliveryTime) {
-          deliveryTime.addEventListener('change', () => updateTimes('delivery'));
+        const uberContainer = document.getElementById('uberBtnContainer');
+        
+        console.log('Checking Uber button conditions...');
+        console.log('Date:', deliveryDate?.value);
+        console.log('Time:', deliveryTime?.value);
+        console.log('Container exists:', !!uberContainer);
+        
+        if (!uberContainer) return;
+        
+        if (deliveryDate?.value && deliveryTime?.value) {
+          console.log('Showing Uber button');
+          uberContainer.innerHTML = '<button class="btn" onclick="openUberApp()">Schedule Uber</button>';
+        } else {
+          console.log('Hiding Uber button');
+          uberContainer.innerHTML = '';
         }
       }
+      
+      // Make this function global so the onclick can access it
+      window.openUberApp = function() {
+        const uberAppLink = `uber://?action=setPickup&pickup[latitude]=37.8244&pickup[longitude]=-122.232&pickup[nickname]=Ranch%20Lab&pickup[formatted_address]=964%20Rose%20Ave%2C%20Piedmont%2C%20CA%2094611`;
+        const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=37.8244&pickup[longitude]=-122.232&pickup[nickname]=Ranch%20Lab&pickup[formatted_address]=964%20Rose%20Ave%2C%20Piedmont%2C%20CA%2094611`;
+        
+        showMessage("Opening Uber...", 'success');
+        window.location.href = uberAppLink;
+        setTimeout(() => {
+          window.open(uberWebLink, '_blank');
+        }, 1000);
+      };
+      
       function init() {
-        setupEventListeners();
+        // Pickup/Delivery buttons
+        document.getElementById('pickupBtn').addEventListener('click', () => selectFulfillmentType('pickup'));
+        document.getElementById('deliveryBtn').addEventListener('click', () => selectFulfillmentType('delivery'));
+        
+        // Pickup date change
+        document.getElementById('pickupDate').addEventListener('change', function() {
+          const timeSelect = document.getElementById('pickupTime');
+          if (this.value) {
+            timeSelect.disabled = false;
+            timeSelect.innerHTML = generateTimeOptions();
+          } else {
+            timeSelect.disabled = true;
+            timeSelect.innerHTML = '<option value="">First select a date</option>';
+          }
+        });
+        
+        // Delivery date change
+        document.getElementById('deliveryDate').addEventListener('change', function() {
+          const timeSelect = document.getElementById('deliveryTime');
+          if (this.value) {
+            timeSelect.disabled = false;
+            timeSelect.innerHTML = generateTimeOptions();
+          } else {
+            timeSelect.disabled = true;
+            timeSelect.innerHTML = '<option value="">First select a date</option>';
+          }
+          showUberButton();
+        });
+        
+        // Delivery time change
+        document.getElementById('deliveryTime').addEventListener('change', function() {
+          console.log('Delivery time changed to:', this.value);
+          showUberButton();
+        });
       }
+      
       return {
         init: init
       };
     })();
 
+    // Modal functionality
     const Modals = (function () {
       function setupModal(triggerId, modalId, closeId) {
         const openBtn = document.getElementById(triggerId);
         const modal = document.getElementById(modalId);
         const closeBtn = document.getElementById(closeId);
         if (!openBtn || !modal || !closeBtn) return;
+        
         function openModal(e) {
           e?.preventDefault();
           modal.classList.add('show');
           modal.setAttribute('aria-hidden', 'false');
           document.body.style.overflow = 'hidden';
         }
+        
         function closeModal() {
           modal.classList.remove('show');
           modal.setAttribute('aria-hidden', 'true');
           document.body.style.overflow = '';
         }
+        
         openBtn.addEventListener('click', openModal);
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', (e) => {
           if (e.target === modal) closeModal();
         });
+        
         return closeModal;
       }
+      
       function init() {
         const closers = [
           setupModal('openStory', 'storyModal', 'closeStory'),
@@ -761,18 +799,21 @@
           setupModal('openSummer', 'summerModal', 'closeSummer'),
           setupModal('openCooking', 'cookingModal', 'closeCooking')
         ].filter(Boolean);
+        
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
             closers.forEach(closeFn => closeFn());
           }
         });
       }
+      
       return {
         init: init
       };
     })();
 
-    const Checkout = (function (cartReader, messageSender) {
+    // Checkout functionality
+    const Checkout = (function () {
       async function createCheckoutSession(payload) {
         const res = await fetch('/api/checkout', {
           method: 'POST',
@@ -785,51 +826,60 @@
         }
         return res.json();
       }
+      
       async function handleSubmit(event) {
         event.preventDefault();
-        const cartItems = cartReader();
+        const cartItems = Cart.readCart();
         if (!cartItems.length) {
-          messageSender('Please add at least one item.');
+          showMessage('Please add at least one item.');
           return;
         }
+        
         const customer = {
           name: document.getElementById('customerName').value.trim(),
           email: document.getElementById('customerEmail').value.trim(),
           phone: document.getElementById('customerPhone').value.trim(),
         };
+        
         if (!customer.name || !customer.email || !customer.phone) {
-          messageSender('Please enter name, email, and phone.');
+          showMessage('Please enter name, email, and phone.');
           return;
         }
+        
         const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
         const slot = orderType === 'pickup'
           ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
           : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
+        
         try {
-          messageSender('Redirecting to Stripe...', 'success');
+          showMessage('Redirecting to Stripe...', 'success');
           const submitBtn = document.getElementById('submit-order');
           submitBtn.textContent = 'Processing...';
           submitBtn.disabled = true;
+          
           const response = await createCheckoutSession({ cartItems, orderType, slot, customer });
           window.location.href = response.url;
         } catch (e) {
-          messageSender('Checkout failed: ' + e.message, 'warning');
+          showMessage('Checkout failed: ' + e.message, 'warning');
           const submitBtn = document.getElementById('submit-order');
           submitBtn.textContent = 'Complete Order';
           submitBtn.disabled = false;
         }
       }
+      
       function init() {
         document.getElementById('submit-order').addEventListener('click', handleSubmit);
       }
+      
       return {
         init: init
       };
-    })(Cart.readCart, showMessage);
+    })();
 
+    // Initialize everything when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
       Cart.init();
-      Fulfillment.init();
+      DeliverySystem.init();
       Modals.init();
       Checkout.init();
     });
