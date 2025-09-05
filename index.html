@@ -709,14 +709,28 @@
       
       // Make this function global so the onclick can access it
       window.openUberApp = function() {
-        const uberAppLink = `uber://?action=setPickup&pickup[latitude]=37.8244&pickup[longitude]=-122.232&pickup[nickname]=Ranch%20Lab&pickup[formatted_address]=964%20Rose%20Ave%2C%20Piedmont%2C%20CA%2094611`;
-        const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=37.8244&pickup[longitude]=-122.232&pickup[nickname]=Ranch%20Lab&pickup[formatted_address]=964%20Rose%20Ave%2C%20Piedmont%2C%20CA%2094611`;
+        // Try multiple Uber URL formats for better compatibility
+        const address = "964 Rose Ave, Piedmont, CA 94611";
+        const encodedAddress = encodeURIComponent(address);
+        
+        // Method 1: Modern Uber deep link
+        const uberApp1 = `uber://?action=setPickup&pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
+        
+        // Method 2: Alternative format
+        const uberApp2 = `uber://ride?pickup[formatted_address]=${encodedAddress}`;
+        
+        // Method 3: Web fallback with pre-filled pickup
+        const uberWeb = `https://m.uber.com/looking?pickup[formatted_address]=${encodedAddress}&pickup[latitude]=37.8244&pickup[longitude]=-122.232`;
         
         showMessage("Opening Uber...", 'success');
-        window.location.href = uberAppLink;
+        
+        // Try the primary app link
+        window.location.href = uberApp1;
+        
+        // Fallback to web version if app doesn't open
         setTimeout(() => {
-          window.open(uberWebLink, '_blank');
-        }, 1000);
+          window.open(uberWeb, '_blank');
+        }, 2000);
       };
       
       function init() {
