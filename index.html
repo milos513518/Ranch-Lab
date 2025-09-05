@@ -579,16 +579,16 @@
                 <div class="order-item-name">${i.name}</div>
                 <div class="order-item-qty">Qty: ${i.qty}</div>
               </div>
-              <div class="order-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+              <div class="order-item-price">${(i.price * i.qty).toFixed(2)}</div>
             </div>
           `).join('');
         }
         const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
-        if (subEl) subEl.textContent = `$${subtotal.toFixed(2)}`;
-        if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-        if (totalEl) totalEl.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+        if (subEl) subEl.textContent = `${subtotal.toFixed(2)}`;
+        if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
+        if (totalEl) totalEl.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
       }
       function onQtyChange(input) {
         const qty = parseInt(input.value || '0', 10) || 0;
@@ -636,15 +636,18 @@
       const UBER_PICKUP_LONGITUDE = -122.232;
       const UBER_PICKUP_NICKNAME = 'Ranch Lab';
       const UBER_PICKUP_ADDRESS = '964 Rose Avenue, Piedmont, CA, 94611';
+      
       function selectChoice(type) {
         const pickupBtn = document.getElementById('pickupBtn');
         const deliveryBtn = document.getElementById('deliveryBtn');
         const pickupSchedule = document.getElementById('pickupSchedule');
         const deliverySchedule = document.getElementById('deliverySchedule');
+        
         pickupBtn.classList.remove('selected');
         deliveryBtn.classList.remove('selected');
         pickupSchedule.style.display = 'none';
         deliverySchedule.style.display = 'none';
+        
         if (type === 'pickup') {
           pickupBtn.classList.add('selected');
           pickupSchedule.style.display = 'block';
@@ -653,13 +656,17 @@
           deliverySchedule.style.display = 'block';
         }
       }
+      
       function updateTimes(type) {
         const dateEl = document.getElementById(type + 'Date');
         const timeEl = document.getElementById(type + 'Time');
         const uberBtnContainer = document.getElementById('uberBtnContainer');
+        
         if (dateEl.value) {
           timeEl.disabled = false;
           timeEl.innerHTML = '<option value="">Select time...</option>';
+          
+          // Generate time slots from 12:00pm to 1:45pm in 15-minute intervals
           for (let hour = 12; hour < 14; hour++) {
             for (let min = 0; min < 60; min += 15) {
               const startHour = hour > 12 ? hour - 12 : hour;
@@ -668,8 +675,10 @@
               const endHour = endMin >= 60 ? hour + 1 : hour;
               const endSuffix = endHour >= 12 ? 'pm' : 'am';
               const endDisplayHour = endHour > 12 ? endHour - 12 : endHour;
+              
               const start = `${startHour}:${(min < 10 ? '0' : '')}${min}${startSuffix}`;
               const end = `${endDisplayHour}:${((endMin % 60) < 10 ? '0' : '')}${(endMin % 60)}${endSuffix}`;
+              
               const option = document.createElement('option');
               option.value = start;
               option.textContent = start + ' - ' + end;
@@ -680,37 +689,45 @@
           timeEl.disabled = true;
           timeEl.innerHTML = '<option value="">First select a date</option>';
         }
+        
+        // Handle Uber button for delivery
         if (type === 'delivery' && uberBtnContainer) {
-          if (timeEl.value) {
+          if (dateEl.value && timeEl.value) {
             uberBtnContainer.innerHTML = `<button class="btn" id="reserveUberBtn">Reserve Uber</button>`;
             const reserveUberBtn = document.getElementById('reserveUberBtn');
-            reserveUberBtn.addEventListener('click', () => {
-              const uberAppLink = `uber://?action=setPickup&pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
-              const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
-              showMessage("Opening Uber...", 'success');
-              window.location.href = uberAppLink;
-              setTimeout(() => {
-                window.open(uberWebLink, '_blank');
-              }, 1000);
-            });
+            if (reserveUberBtn) {
+              reserveUberBtn.addEventListener('click', () => {
+                const uberAppLink = `uber://?action=setPickup&pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
+                const uberWebLink = `https://m.uber.com/looking?pickup[latitude]=${UBER_PICKUP_LATITUDE}&pickup[longitude]=${UBER_PICKUP_LONGITUDE}&pickup[nickname]=${encodeURIComponent(UBER_PICKUP_NICKNAME)}&pickup[formatted_address]=${encodeURIComponent(UBER_PICKUP_ADDRESS)}`;
+                
+                showMessage("Opening Uber...", 'success');
+                window.location.href = uberAppLink;
+                setTimeout(() => {
+                  window.open(uberWebLink, '_blank');
+                }, 1000);
+              });
+            }
           } else {
             uberBtnContainer.innerHTML = '';
           }
         }
       }
+      
       function setupEventListeners() {
         document.getElementById('pickupBtn').addEventListener('click', () => selectChoice('pickup'));
         document.getElementById('deliveryBtn').addEventListener('click', () => selectChoice('delivery'));
+        
         document.getElementById('pickupDate').addEventListener('change', () => updateTimes('pickup'));
         document.getElementById('deliveryDate').addEventListener('change', () => updateTimes('delivery'));
-        const deliveryTime = document.getElementById('deliveryTime');
-        if (deliveryTime) {
-          deliveryTime.addEventListener('change', () => updateTimes('delivery'));
-        }
+        
+        document.getElementById('pickupTime').addEventListener('change', () => updateTimes('pickup'));
+        document.getElementById('deliveryTime').addEventListener('change', () => updateUberButton());
       }
+      
       function init() {
         setupEventListeners();
       }
+      
       return {
         init: init
       };
@@ -722,24 +739,29 @@
         const modal = document.getElementById(modalId);
         const closeBtn = document.getElementById(closeId);
         if (!openBtn || !modal || !closeBtn) return;
+        
         function openModal(e) {
           e?.preventDefault();
           modal.classList.add('show');
           modal.setAttribute('aria-hidden', 'false');
           document.body.style.overflow = 'hidden';
         }
+        
         function closeModal() {
           modal.classList.remove('show');
           modal.setAttribute('aria-hidden', 'true');
           document.body.style.overflow = '';
         }
+        
         openBtn.addEventListener('click', openModal);
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', (e) => {
           if (e.target === modal) closeModal();
         });
+        
         return closeModal;
       }
+      
       function init() {
         const closers = [
           setupModal('openStory', 'storyModal', 'closeStory'),
@@ -748,12 +770,14 @@
           setupModal('openSummer', 'summerModal', 'closeSummer'),
           setupModal('openCooking', 'cookingModal', 'closeCooking')
         ].filter(Boolean);
+        
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
             closers.forEach(closeFn => closeFn());
           }
         });
       }
+      
       return {
         init: init
       };
@@ -772,6 +796,7 @@
         }
         return res.json();
       }
+      
       async function handleSubmit(event) {
         event.preventDefault();
         const cartItems = cartReader();
@@ -779,24 +804,29 @@
           messageSender('Please add at least one item.');
           return;
         }
+        
         const customer = {
           name: document.getElementById('customerName').value.trim(),
           email: document.getElementById('customerEmail').value.trim(),
           phone: document.getElementById('customerPhone').value.trim(),
         };
+        
         if (!customer.name || !customer.email || !customer.phone) {
           messageSender('Please enter name, email, and phone.');
           return;
         }
+        
         const orderType = document.getElementById('pickupSchedule').style.display === 'block' ? 'pickup' : 'delivery';
         const slot = orderType === 'pickup'
           ? `${document.getElementById('pickupDate').value} ${document.getElementById('pickupTime').value}`
           : `${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value}`;
+        
         try {
           messageSender('Redirecting to Stripe...', 'success');
           const submitBtn = document.getElementById('submit-order');
           submitBtn.textContent = 'Processing...';
           submitBtn.disabled = true;
+          
           const response = await createCheckoutSession({ cartItems, orderType, slot, customer });
           window.location.href = response.url;
         } catch (e) {
@@ -806,9 +836,11 @@
           submitBtn.disabled = false;
         }
       }
+      
       function init() {
         document.getElementById('submit-order').addEventListener('click', handleSubmit);
       }
+      
       return {
         init: init
       };
