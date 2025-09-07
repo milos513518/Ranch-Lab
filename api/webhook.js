@@ -19,49 +19,63 @@ async function sendConfirmationEmail(session) {
     
     // Create order summary HTML
     const itemsList = cartItems.map(item => 
-      `<li>${item.name} x${item.qty} - $${(item.price * item.qty).toFixed(2)}</li>`
+      `<li style="padding: 8px 0; border-bottom: 1px solid #ffe0b2; color: #bf360c;">${item.name} x${item.qty} - $${(item.price * item.qty).toFixed(2)}</li>`
     ).join('');
     
     const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #6d28d9;">Order Confirmation - Ranch Lab</h1>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #fff8f0 0%, #fff3e0 100%); border-radius: 12px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); padding: 30px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">🔥 Ranch Lab</h1>
+          <p style="color: #fff3e0; margin: 8px 0; font-size: 16px;">Fire-inspired cooking crafted from my travels</p>
+        </div>
         
-        <p>Hi ${metadata.customerName},</p>
-        
-        <p>Thank you for your order! We've received your payment and will have your food ready for ${metadata.orderType}.</p>
-        
-        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Order Details</h3>
-          <p><strong>Order Type:</strong> ${metadata.orderType === 'pickup' ? 'Pickup' : 'Delivery'}</p>
-          <p><strong>Time:</strong> ${metadata.slot}</p>
-          <p><strong>Phone:</strong> ${metadata.customerPhone}</p>
+        <div style="padding: 30px;">
+          <h2 style="color: #bf360c; margin: 0 0 20px; font-size: 24px;">Order Confirmed!</h2>
           
-          ${metadata.orderType === 'pickup' ? 
-            '<p><strong>Pickup Address:</strong><br>964 Rose Ave, Piedmont, CA 94611</p>' : 
-            '<p><strong>Note:</strong> Your order will be ready for Uber pickup at the scheduled time.</p>'
-          }
+          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Hi ${metadata.customerName},</p>
+          
+          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Thank you for your order! We've received your payment and will have your food ready for ${metadata.orderType}.</p>
+          
+          <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 6px solid #ff6b35; box-shadow: 0 2px 8px rgba(255,107,53,0.15);">
+            <h3 style="color: #bf360c; margin: 0 0 16px; font-size: 20px;">Order Details</h3>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Order Type:</strong> ${metadata.orderType === 'pickup' ? 'Pickup' : 'Delivery'}</p>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Time:</strong> ${metadata.slot}</p>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Phone:</strong> ${metadata.customerPhone}</p>
+            
+            ${metadata.orderType === 'pickup' ? 
+              '<p style="margin: 12px 0; color: #5d4037;"><strong>Pickup Address:</strong><br>964 Rose Ave, Piedmont, CA 94611</p>' : 
+              '<p style="margin: 12px 0; color: #5d4037;"><strong>Note:</strong> Your order will be ready for Uber pickup at the scheduled time.</p>'
+            }
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 6px solid #ff8c42; box-shadow: 0 2px 8px rgba(255,140,66,0.15);">
+            <h3 style="color: #bf360c; margin: 0 0 16px; font-size: 20px;">Items Ordered</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              ${itemsList}
+            </ul>
+            <div style="border-top: 3px solid #ff6b35; padding-top: 16px; margin-top: 16px;">
+              <p style="font-weight: bold; font-size: 18px; color: #bf360c; margin: 0;">
+                Total Paid: $${(session.amount_total / 100).toFixed(2)}
+              </p>
+            </div>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #ff8c42 0%, #ffa726 100%); padding: 20px; border-radius: 8px; margin: 24px 0; text-align: center;">
+            <p style="color: white; margin: 0; font-size: 16px;">Questions? Reply to this email or call us at <strong>(310) 666-0797</strong></p>
+          </div>
+          
+          <div style="text-align: center; margin-top: 30px;">
+            <p style="color: #bf360c; font-size: 18px; font-weight: bold; margin: 0;">Thanks,</p>
+            <p style="color: #ff6b35; font-size: 20px; font-weight: bold; margin: 8px 0;">Milos & the Ranch Lab team</p>
+          </div>
         </div>
-        
-        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3>Items Ordered</h3>
-          <ul style="list-style: none; padding: 0;">
-            ${itemsList}
-          </ul>
-          <p style="font-weight: bold; border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 10px;">
-            Total Paid: $${(session.amount_total / 100).toFixed(2)}
-          </p>
-        </div>
-        
-        <p>Questions? Reply to this email or call us at (310) 666-0797.</p>
-        
-        <p>Thanks,<br>Milos & the Ranch Lab team</p>
       </div>
     `;
 
     await resend.emails.send({
       from: 'Ranch Lab <orders@ranchlab.is>',
       to: [session.customer_email],
-      subject: `Order Confirmation - Ranch Lab (${metadata.orderType})`,
+      subject: `🔥 Order Confirmation - Ranch Lab (${metadata.orderType})`,
       html: emailHtml,
     });
 
