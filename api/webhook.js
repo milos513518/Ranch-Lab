@@ -71,7 +71,7 @@ async function sendConfirmationEmail(session) {
     `;
 
     await resend.emails.send({
-      from: 'Ranch Lab <orders@ranchlab.is>',
+      from: 'Ranch Lab <onboarding@resend.dev>',
       to: [session.customer_email],
       subject: `Order Confirmation - Ranch Lab (${metadata.orderType})`,
       html: emailHtml,
