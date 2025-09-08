@@ -6,9 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const config = {
   api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
+    bodyParser: false, // Important: disable Vercel's body parser
   },
 };
 
@@ -25,7 +23,7 @@ async function sendConfirmationEmail(session) {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #fff8f0 0%, #fff3e0 100%); border-radius: 12px; overflow: hidden;">
         <div style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); padding: 30px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">🔥 Ranch Lab</h1>
+          <img src="https://i.imgur.com/CxUwX5E.png" alt="Ranch Lab" style="max-width: 200px; height: auto; margin-bottom: 16px;" />
           <p style="color: #fff3e0; margin: 8px 0; font-size: 16px;">Fire-inspired cooking crafted from my travels</p>
         </div>
         
@@ -75,7 +73,7 @@ async function sendConfirmationEmail(session) {
     await resend.emails.send({
       from: 'Ranch Lab <orders@ranchlab.is>',
       to: [session.customer_email],
-      subject: `🔥 Order Confirmation - Ranch Lab (${metadata.orderType})`,
+      subject: `Order Confirmation - Ranch Lab (${metadata.orderType})`,
       html: emailHtml,
     });
 
@@ -99,7 +97,13 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    const body = JSON.stringify(req.body);
+    // Get raw body for Stripe signature verification
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    const body = Buffer.concat(chunks);
+
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     console.log(`Webhook signature verification failed.`, err.message);
