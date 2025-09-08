@@ -12,7 +12,11 @@ export const config = {
 
 async function sendConfirmationEmail(session) {
   try {
-    const metadata = session.metadata;
+    const metadata = session.metadata || {};
+    const customerName = metadata.customerName || 'Customer';
+    const customerPhone = metadata.customerPhone || 'Not provided';
+    const orderType = metadata.orderType || 'pickup';
+    const slot = metadata.slot || 'Not specified';
     const cartItems = JSON.parse(metadata.cartItems || '[]');
     
     // Create order summary HTML
@@ -30,17 +34,17 @@ async function sendConfirmationEmail(session) {
         <div style="padding: 30px;">
           <h2 style="color: #bf360c; margin: 0 0 20px; font-size: 24px;">Order Confirmed!</h2>
           
-          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Hi ${metadata.customerName},</p>
+          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Hi ${customerName},</p>
           
-          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Thank you for your order! We've received your payment and will have your food ready for ${metadata.orderType}.</p>
+          <p style="color: #5d4037; font-size: 16px; line-height: 1.6;">Thank you for your order! We've received your payment and will have your food ready for ${orderType}.</p>
           
           <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 6px solid #ff6b35; box-shadow: 0 2px 8px rgba(255,107,53,0.15);">
             <h3 style="color: #bf360c; margin: 0 0 16px; font-size: 20px;">Order Details</h3>
-            <p style="margin: 8px 0; color: #5d4037;"><strong>Order Type:</strong> ${metadata.orderType === 'pickup' ? 'Pickup' : 'Delivery'}</p>
-            <p style="margin: 8px 0; color: #5d4037;"><strong>Time:</strong> ${metadata.slot}</p>
-            <p style="margin: 8px 0; color: #5d4037;"><strong>Phone:</strong> ${metadata.customerPhone}</p>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Order Type:</strong> ${orderType === 'pickup' ? 'Pickup' : 'Delivery'}</p>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Time:</strong> ${slot}</p>
+            <p style="margin: 8px 0; color: #5d4037;"><strong>Phone:</strong> ${customerPhone}</p>
             
-            ${metadata.orderType === 'pickup' ? 
+            ${orderType === 'pickup' ? 
               '<p style="margin: 12px 0; color: #5d4037;"><strong>Pickup Address:</strong><br>964 Rose Ave, Piedmont, CA 94611</p>' : 
               '<p style="margin: 12px 0; color: #5d4037;"><strong>Note:</strong> Your order will be ready for Uber pickup at the scheduled time.</p>'
             }
@@ -73,14 +77,19 @@ async function sendConfirmationEmail(session) {
     await resend.emails.send({
       from: 'Ranch Lab <onboarding@resend.dev>',
       to: [session.customer_email],
-      subject: `Order Confirmation - Ranch Lab (${metadata.orderType})`,
+      subject: `Order Confirmation - Ranch Lab (${orderType})`,
       html: emailHtml,
     });
 
-    console.log('Confirmation email sent to:', session.customer_email);
+    console.log('Confirmation email sent successfully to:', session.customer_email);
     
   } catch (error) {
-    console.error('Error sending confirmation email:', error);
+    console.error('CRITICAL: Failed to send confirmation email:', {
+      error: error.message,
+      customerEmail: session.customer_email,
+      sessionId: session.id
+    });
+    // Don't throw - we don't want to fail the webhook if email fails
   }
 }
 
@@ -93,6 +102,11 @@ export default async function handler(req, res) {
 
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    console.error('STRIPE_WEBHOOK_SECRET not configured');
+    return res.status(500).json({ error: 'Webhook not configured' });
+  }
 
   let event;
 
