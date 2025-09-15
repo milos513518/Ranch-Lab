@@ -11,13 +11,13 @@ export default async function handler(req, res) {
     return res.status(400).send("No items in cart.");
   }
 
-  const line_items = cartItems.map(i => ({
+  const line_items = cartItems.map((i) => ({
     price_data: {
       currency: "usd",
       product_data: { name: i.name },
-      unit_amount: Math.round(Number(i.price) * 100) // dollars -> cents
+      unit_amount: Math.round(Number(i.price) * 100), // dollars -> cents
     },
-    quantity: Number(i.quantity) || 1
+    quantity: Number(i.quantity) || 1,
   }));
 
   const metadata = {
@@ -25,10 +25,11 @@ export default async function handler(req, res) {
     slot: slot || "",
     name: customer?.name || "",
     email: customer?.email || "",
-    phone: customer?.phone || ""
+    phone: customer?.phone || "",
   };
 
-  const origin = req.headers.origin ||
+  const origin =
+    req.headers.origin ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     "http://localhost:3000";
 
@@ -37,13 +38,20 @@ export default async function handler(req, res) {
       mode: "payment",
       payment_method_types: ["card"],
       line_items,
+
+      // 👇 ensures webhook has an email to send to
+      customer_email: customer?.email || undefined,
+      customer_creation: "always",
+
+      billing_address_collection: "auto", // optional but useful
       success_url: `${origin}/?status=success`,
       cancel_url: `${origin}/?status=cancel`,
-      metadata
+      metadata,
     });
+
     res.status(200).json({ url: session.url });
   } catch (e) {
-    console.error(e);
+    console.error("Stripe error creating checkout session:", e);
     res.status(500).send("Stripe error creating checkout session");
   }
 }
