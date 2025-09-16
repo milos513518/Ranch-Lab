@@ -1,7 +1,8 @@
 {
-  "functions": {
-    "api/webhook.js": {
-      "maxDuration": 10
-    }
+  "type": "module",
+  "dependencies": {
+    "stripe": "^14.5.0",
+    "resend": "^3.0.0",
+    "micro": "^10.0.0"
   }
 }
