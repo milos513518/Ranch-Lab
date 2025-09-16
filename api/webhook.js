@@ -17,6 +17,11 @@ module.exports = async function handler(req, res) {
     const session = event.data.object;
 
     try {
+      // Retrieve the full session with expanded line items
+      const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ['line_items', 'line_items.data.price.product']
+      });
+
       // Send confirmation email
       await resend.emails.send({
         from: "Ranch Lab <orders@ranchlab.is>",
@@ -34,8 +39,7 @@ module.exports = async function handler(req, res) {
             <div style="padding:20px; color:#333;">
               <h2 style="margin-top:0;">Thank you for your order!</h2>
               <p>Hi ${session.customer_details?.name?.split(' ')[0] || "friend"},</p>
-              <p>Thank you for your order and welcome to Ranch Lab culinary exploration.</p>
-              <p>Here are your order details:</p>
+              <p>Thank you for your order and welcome to Ranch Lab culinary exploration!</p>
               
               <h3>Order Summary</h3>
               <!-- Order summary -->
@@ -47,14 +51,17 @@ module.exports = async function handler(req, res) {
                   </tr>
                 </thead>
                 <tbody>
-                  ${(session.line_items || [])
+                  ${(fullSession.line_items?.data || [])
                     .map(
                       (item) => `
                       <tr>
-                        <td style="padding:10px; border-bottom:1px solid #eee;">${item.description}</td>
-                        <td align="right" style="padding:10px; border-bottom:1px solid #eee;">$${(
-                          item.amount_total / 100
-                        ).toFixed(2)}</td>
+                        <td style="padding:10px; border-bottom:1px solid #eee;">
+                          ${item.price?.product?.name || item.description} 
+                          ${item.quantity > 1 ? ` (x${item.quantity})` : ''}
+                        </td>
+                        <td align="right" style="padding:10px; border-bottom:1px solid #eee;">
+                          $${((item.amount_total || 0) / 100).toFixed(2)}
+                        </td>
                       </tr>`
                     )
                     .join("")}
@@ -65,19 +72,30 @@ module.exports = async function handler(req, res) {
               <!-- Pickup/Delivery Information -->
               <h3>Pickup/Delivery Information</h3>
               <div style="background:#f9f9f9; padding:15px; margin:20px 0; border-radius:5px;">
-                <p><strong>Customer:</strong> ${session.customer_details?.name || "N/A"}</p>
-                <p><strong>Email:</strong> ${session.customer_email || "N/A"}</p>
-                <p><strong>Phone:</strong> ${session.customer_details?.phone || "N/A"}</p>
-                ${session.shipping ? `
-                <p><strong>Delivery Address:</strong><br/>
-                ${session.shipping.address?.line1 || ""}<br/>
-                ${session.shipping.address?.city || ""}, ${session.shipping.address?.state || ""} ${session.shipping.address?.postal_code || ""}</p>
+                ${session.metadata?.fulfillment_type === 'pickup' ? `
+                  <p style="font-style:italic; margin-bottom:15px;">Selecting a pickup time helps us have your order ready.</p>
+                  <p><strong>Select Date:</strong> ${session.metadata?.pickup_date || 'Not specified'}</p>
+                  <p><strong>Select Time Slot:</strong> ${session.metadata?.pickup_time || 'Not specified'}</p>
+                  <p><strong>Pick Up Address:</strong><br/>
+                  ${session.metadata?.pickup_address || '964 Rose Ave, Piedmont, CA 94611'}</p>
+                ` : session.metadata?.fulfillment_type === 'delivery' ? `
+                  <p style="font-style:italic; margin-bottom:15px;">Choose when your order should be ready for Uber pickup.</p>
+                  <p><strong>Select Date:</strong> ${session.metadata?.delivery_date || 'Not specified'}</p>
+                  <p><strong>Select Time Slot:</strong> ${session.metadata?.delivery_time || 'Not specified'}</p>
+                  <p><strong>Pick Up Address:</strong><br/>
+                  ${session.metadata?.pickup_address || '964 Rose Ave, Piedmont, CA 94611'}</p>
+                  <p style="margin-top:15px; font-size:12px; color:#666;">
+                  After clicking "Schedule Uber Courier", you'll need to reserve your ride by clicking the "Pick Up Now" button in the Uber app. 
+                  Use the "Copy Pick Up Address" button above to easily paste the address into Uber's pickup field.
+                  </p>
                 ` : `
-                <p><strong>Pickup Location:</strong> Ranch Lab, San Francisco, CA</p>
+                  <p><strong>Pickup Location:</strong> Ranch Lab, San Francisco, CA</p>
+                  <p style="margin-top:15px; font-style:italic; color:#666;">
+                  Note: To display pickup/delivery scheduling details, please select pickup or delivery option during checkout.
+                  </p>
                 `}
               </div>
               
-              <p>We'll send another update once your order is ready.</p>
               <p>With gratitude,<br/>Milos</p>
             </div>
             <!-- Footer -->
