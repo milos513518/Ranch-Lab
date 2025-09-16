@@ -44,12 +44,6 @@ module.exports = async function handler(req, res) {
               <h3>Order Summary</h3>
               <!-- Order summary -->
               <table width="100%" style="border-collapse:collapse; margin:20px 0;">
-                <thead>
-                  <tr style="background:#f3f3f3;">
-                    <th align="left" style="padding:10px; border-bottom:1px solid #ddd;">Item</th>
-                    <th align="right" style="padding:10px; border-bottom:1px solid #ddd;">Price</th>
-                  </tr>
-                </thead>
                 <tbody>
                   ${(fullSession.line_items?.data || [])
                     .map(
@@ -70,20 +64,28 @@ module.exports = async function handler(req, res) {
               <p><strong>Total: $${(session.amount_total / 100).toFixed(2)}</strong></p>
               
               <!-- Pickup/Delivery Information -->
-              <h3>Pickup/Delivery Information</h3>
+              <h3>${session.metadata?.fulfillment_type === 'pickup' ? 'Pickup' : session.metadata?.fulfillment_type === 'delivery' ? 'Delivery' : 'Pickup/Delivery Information'}</h3>
               <div style="background:#f9f9f9; padding:15px; margin:20px 0; border-radius:5px;">
                 ${session.metadata?.fulfillment_type === 'pickup' ? `
                   <p style="font-style:italic; margin-bottom:15px;">Selecting a pickup time helps us have your order ready.</p>
-                  <p><strong>Select Date:</strong> ${session.metadata?.pickup_date || 'Not specified'}</p>
-                  <p><strong>Select Time Slot:</strong> ${session.metadata?.pickup_time || 'Not specified'}</p>
+                  <p><strong>Selected Date:</strong> ${session.metadata?.pickup_date || 'Not specified'}</p>
+                  <p><strong>Selected Time:</strong> ${session.metadata?.pickup_time || 'Not specified'}</p>
                   <p><strong>Pick Up Address:</strong><br/>
                   ${session.metadata?.pickup_address || '964 Rose Ave, Piedmont, CA 94611'}</p>
                 ` : session.metadata?.fulfillment_type === 'delivery' ? `
-                  <p style="font-style:italic; margin-bottom:15px;">Choose when your order should be ready for Uber pickup.</p>
-                  <p><strong>Select Date:</strong> ${session.metadata?.delivery_date || 'Not specified'}</p>
-                  <p><strong>Select Time Slot:</strong> ${session.metadata?.delivery_time || 'Not specified'}</p>
+                  <p><strong>Selected Date:</strong> ${session.metadata?.delivery_date || 'Not specified'}</p>
+                  <p><strong>Selected Time:</strong> ${session.metadata?.delivery_time || 'Not specified'}</p>
                   <p><strong>Pick Up Address:</strong><br/>
                   ${session.metadata?.pickup_address || '964 Rose Ave, Piedmont, CA 94611'}</p>
+                  
+                  <!-- Schedule Uber Button -->
+                  <div style="text-align:center; margin:20px 0;">
+                    <a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[formatted_address]=964%20Rose%20Ave%2C%20Piedmont%2C%20CA%2094611" 
+                       style="background:#000000; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:8px; display:inline-block; font-weight:bold;">
+                       Schedule Uber Courier
+                    </a>
+                  </div>
+                  
                   <p style="margin-top:15px; font-size:12px; color:#666;">
                   After clicking "Schedule Uber Courier", you'll need to reserve your ride by clicking the "Pick Up Now" button in the Uber app. 
                   Use the "Copy Pick Up Address" button above to easily paste the address into Uber's pickup field.
