@@ -102,8 +102,6 @@ module.exports = async function handler(req, res) {
             </div>
             <!-- Footer -->
             <div style="background:#f3f3f3; padding:15px; text-align:center; font-size:12px; color:#777;">
-              <p>Ranch Lab, San Francisco, CA</p>
-              <p><a href="https://ranchlab.is" style="color:#B22222; text-decoration:none;">Visit our website</a></p>
             </div>
           </div>
         </div>
