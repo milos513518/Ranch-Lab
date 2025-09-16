@@ -1,18 +1,13 @@
-import { Resend } from 'resend';
-import Stripe from 'stripe';
+const { Resend } = require('resend');
+const Stripe = require('stripe');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
-
-  const sig = req.headers['stripe-signature'];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  let event;
 
   // Skip signature verification for now
   const event = req.body;
@@ -86,4 +81,4 @@ export default async function handler(req, res) {
 
   // Return 200 to acknowledge receipt of the event
   res.status(200).json({ received: true });
-}
+};
