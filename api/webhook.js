@@ -27,15 +27,17 @@ module.exports = async function handler(req, res) {
           <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
             
             <!-- Header with Logo -->
-            <div style="background:#B22222; padding:20px; text-align:center;">
+            <div style="background:#ffffff; padding:20px; text-align:center;">
               <img src="https://ranchlab.is/assets/logo.png" alt="Ranch Lab" width="100" height="100" style="border-radius:12px;" />
-              <h1 style="color:#fff; margin:10px 0 0; font-size:24px;">Ranch Lab</h1>
             </div>
             <!-- Body -->
             <div style="padding:20px; color:#333;">
               <h2 style="margin-top:0;">Thank you for your order!</h2>
-              <p>Hi ${session.customer_details?.name || "friend"},</p>
-              <p>We've received your order and are getting it ready. Here are the details:</p>
+              <p>Hi ${session.customer_details?.name?.split(' ')[0] || "friend"},</p>
+              <p>Thank you for your order and welcome to Ranch Lab culinary exploration.</p>
+              <p>Here are your order details:</p>
+              
+              <h3>Order Summary</h3>
               <!-- Order summary -->
               <table width="100%" style="border-collapse:collapse; margin:20px 0;">
                 <thead>
@@ -59,8 +61,24 @@ module.exports = async function handler(req, res) {
                 </tbody>
               </table>
               <p><strong>Total: $${(session.amount_total / 100).toFixed(2)}</strong></p>
-              <p style="margin-top:30px;">We'll send another update once your order is on the way.</p>
-              <p>With gratitude, <br/> The Ranch Lab Team</p>
+              
+              <!-- Pickup/Delivery Information -->
+              <h3>Pickup/Delivery Information</h3>
+              <div style="background:#f9f9f9; padding:15px; margin:20px 0; border-radius:5px;">
+                <p><strong>Customer:</strong> ${session.customer_details?.name || "N/A"}</p>
+                <p><strong>Email:</strong> ${session.customer_email || "N/A"}</p>
+                <p><strong>Phone:</strong> ${session.customer_details?.phone || "N/A"}</p>
+                ${session.shipping ? `
+                <p><strong>Delivery Address:</strong><br/>
+                ${session.shipping.address?.line1 || ""}<br/>
+                ${session.shipping.address?.city || ""}, ${session.shipping.address?.state || ""} ${session.shipping.address?.postal_code || ""}</p>
+                ` : `
+                <p><strong>Pickup Location:</strong> Ranch Lab, San Francisco, CA</p>
+                `}
+              </div>
+              
+              <p>We'll send another update once your order is ready.</p>
+              <p>With gratitude,<br/>Milos</p>
             </div>
             <!-- Footer -->
             <div style="background:#f3f3f3; padding:15px; text-align:center; font-size:12px; color:#777;">
